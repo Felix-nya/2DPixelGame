@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  heroName: Mage
+  role: 2
+  sprite: {fileID: 0}
+  tint: {r: 0.7025125, g: 0.023584902, b: 1, a: 1}
+  baseStats:
+    maxHealth: 70
+    damage: 16
+    attackSpeed: 0.7
+    range: 5
+    moveSpeed: 2
+    armor: 0
+  targetingType: 1
+  ability: {fileID: 11400000, guid: 340938607e4f29149868982682f1bab0, type: 2}

@@ -1,0 +1,1 @@
+public enum Team { Left, Right }

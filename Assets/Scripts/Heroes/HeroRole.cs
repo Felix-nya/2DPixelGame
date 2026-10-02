@@ -1,0 +1,1 @@
+public enum HeroRole { Warrior, Archer, Mage, Priest }
