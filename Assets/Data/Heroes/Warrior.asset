@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
   heroName: Warrior
   role: 0
-  sprite: {fileID: 0}
-  tint: {r: 0.95112216, g: 1, b: 0.1462264, a: 1}
+  spriteLeftTeam: {fileID: 1841735198376274379, guid: 6f7d70ab7f5298043a2885e25b75f66a, type: 3}
+  spriteRightTeam: {fileID: -3571130556478426072, guid: f4f7267bb2fe9f64caf8396479b368eb, type: 3}
+  tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 140
     damage: 12

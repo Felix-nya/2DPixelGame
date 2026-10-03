@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Hero : MonoBehaviour
@@ -22,6 +23,7 @@ public class Hero : MonoBehaviour
     private float attackTimer;
     private float abilityTimer;
     private float bonusArmor;
+    private IReadOnlyList<ItemData> items = new List<ItemData>();
 
     public void Setup(HeroRuntimeData runtime, Team team, BattleManager battle)
     {
@@ -29,13 +31,20 @@ public class Hero : MonoBehaviour
         Data = data;
         Team = team;
         Stats = runtime.Stats;
+        items = runtime.Items;
         this.battle = battle;
         targeting = TargetingFactory.Create(data.targetingType);
         CurrentHealth = Stats.maxHealth;
         abilityTimer = data.ability != null ? data.ability.cooldown : 0f;
 
         var sr = GetComponent<SpriteRenderer>();
-        if (data.sprite != null) sr.sprite = data.sprite;
+
+        Sprite teamSprite = team == Team.Left ? data.spriteLeftTeam : data.spriteRightTeam;
+        bool hasOwnSprite = teamSprite != null;
+        if (!hasOwnSprite) teamSprite = data.spriteLeftTeam;   // запасной вариант
+
+        if (teamSprite != null) sr.sprite = teamSprite;
+        sr.flipX = team == Team.Right && !hasOwnSprite;        // зеркалим только запасной спрайт
         sr.color = data.tint;
     }
 
@@ -61,10 +70,23 @@ public class Hero : MonoBehaviour
             attackTimer -= Time.deltaTime;
             if (attackTimer <= 0f)
             {
-                target.TakeDamage(DamageCalculator.Calculate(Stats.damage, target.Armor));
+                Attack(target);
                 attackTimer = 1f / Stats.attackSpeed;
             }
         }
+    }
+
+    private void Attack(Hero victim)
+    {
+        float damage = Stats.damage;
+        foreach (var item in items)
+            damage = item.ModifyOutgoingDamage(this, victim, damage);
+
+        float dealt = DamageCalculator.Calculate(damage, victim.Armor);
+        victim.TakeDamage(dealt, this);
+
+        foreach (var item in items)
+            item.OnDamageDealt(this, victim, dealt);
     }
 
     private void UpdateAbility()
@@ -80,13 +102,21 @@ public class Hero : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Hero attacker = null)
     {
         CurrentHealth -= amount;
+
         if (CurrentHealth <= 0f)
         {
             Died?.Invoke(this);
             gameObject.SetActive(false);
+            return;
+        }
+
+        if (attacker != null)
+        {
+            foreach (var item in items)
+                item.OnDamageTaken(this, attacker, amount);
         }
     }
 

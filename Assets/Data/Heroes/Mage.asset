@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
   heroName: Mage
   role: 2
-  sprite: {fileID: 0}
-  tint: {r: 0.7025125, g: 0.023584902, b: 1, a: 1}
+  spriteLeftTeam: {fileID: 447248055226465854, guid: 7bcea8670d80ce446a443db1edce303d, type: 3}
+  spriteRightTeam: {fileID: 4695546510137771435, guid: e12a0e54221a4314b939108e16663a08, type: 3}
+  tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 70
     damage: 16

@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
   heroName: Priest
   role: 3
-  sprite: {fileID: 0}
-  tint: {r: 0.3906634, g: 1, b: 0, a: 1}
+  spriteLeftTeam: {fileID: -3086008009350907632, guid: b5c048ce0102be247884f1dd0b3091fa, type: 3}
+  spriteRightTeam: {fileID: 1882240329132556675, guid: 711d9d15ca5c19048995adac00506d92, type: 3}
+  tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 90
     damage: 5

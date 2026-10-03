@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
 
             foreach (var hero in currentRewardPlayer.Team)
             {
-                string label = $"{hero.Data.heroName} (здоровье {hero.Stats.maxHealth:0}, урон {hero.Stats.damage:0})";
+                string label = $"{hero.Data.heroName} (здоровье {hero.Stats.maxHealth:0}, урон {hero.Stats.damage:0}, предметов {hero.Items.Count})";
                 if (GUI.Button(new Rect(10, y, 900, 40), label))
                 {
                     ChooseTarget(hero);

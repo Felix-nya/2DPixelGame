@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1e1398dfb3840e47ab73d0c65579665, type: 3}
-  m_Name: ArmorBuff
-  m_EditorClassIdentifier: Assembly-CSharp::ArmorBuffAbility
-  abilityName: ArmorBuff
+  m_Script: {fileID: 11500000, guid: 213b2dbc440d1e644858fd96b67d641f, type: 3}
+  m_Name: RageItem
+  m_EditorClassIdentifier: Assembly-CSharp::RageItem
+  itemName: Rage
   description: 
-  cooldown: 5
-  armorBonus: 3
-  duration: 3
+  icon: {fileID: 0}
+  healthThresholdPercent: 30
+  damageMultiplier: 1.5

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cf6aaf201d8fa2469352cf3e89fd156, type: 3}
+  m_Name: Vampirism
+  m_EditorClassIdentifier: Assembly-CSharp::ItemReward
+  rewardName: "\u0412\u0430\u043C\u043F\u0438\u0440\u0438\u0437\u043C"
+  description: "10% \u0445\u0438\u043B\u0430 \u043E\u0442 \u043D\u0430\u043D\u0435\u0441\u0451\u043D\u043D\u043E\u0433\u043E
+    \u0443\u0440\u043E\u043D\u0430"
+  icon: {fileID: 0}
+  item: {fileID: 11400000, guid: d460e7147151e4a41a532d3d3a7f3c11, type: 2}
