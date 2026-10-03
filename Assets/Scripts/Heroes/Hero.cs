@@ -23,11 +23,12 @@ public class Hero : MonoBehaviour
     private float abilityTimer;
     private float bonusArmor;
 
-    public void Setup(HeroData data, Team team, BattleManager battle)
+    public void Setup(HeroRuntimeData runtime, Team team, BattleManager battle)
     {
+        HeroData data = runtime.Data;
         Data = data;
         Team = team;
-        Stats = data.baseStats;
+        Stats = runtime.Stats;
         this.battle = battle;
         targeting = TargetingFactory.Create(data.targetingType);
         CurrentHealth = Stats.maxHealth;

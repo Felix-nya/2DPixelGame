@@ -19,7 +19,7 @@ public class BattleManager : MonoBehaviour
 
     public event Action<BattleResult> BattleEnded;
 
-    public void StartBattle(List<HeroData> leftTeam, List<HeroData> rightTeam)
+    public void StartBattle(List<HeroRuntimeData> leftTeam, List<HeroRuntimeData> rightTeam)
     {
         ClearBattle();
         SpawnTeam(leftTeam, Team.Left, leftSpawn);
@@ -38,7 +38,7 @@ public class BattleManager : MonoBehaviour
         battleActive = false;
     }
 
-    private void SpawnTeam(List<HeroData> team, Team side, Transform spawn)
+    private void SpawnTeam(List<HeroRuntimeData> team, Team side, Transform spawn)
     {
         for (int i = 0; i < team.Count; i++)
         {

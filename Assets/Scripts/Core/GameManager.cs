@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private HeroData startHeroPlayer1;   // временно, до экрана выбора героя
     [SerializeField] private HeroData startHeroPlayer2;
     [SerializeField] private int startingLives = 3;
-    [SerializeField] private float pauseAfterBattle = 2f;
+    [SerializeField] private List<Reward> rewardPool = new List<Reward>();
+    [SerializeField] private int rewardChoices = 3;
 
     public PlayerData Player1 { get; private set; }
     public PlayerData Player2 { get; private set; }
@@ -17,12 +18,18 @@ public class GameManager : MonoBehaviour
 
     private string winnerText = "";
 
+    private readonly Queue<PlayerData> rewardQueue = new Queue<PlayerData>();
+    private PlayerData loser;
+    private PlayerData currentRewardPlayer;
+    private List<Reward> currentOptions = new List<Reward>();
+    private Reward pendingReward;   // награда, для которой ждём выбор героя
+
     private void Start()
     {
         Player1 = new PlayerData("Игрок 1", startingLives);
         Player2 = new PlayerData("Игрок 2", startingLives);
-        Player1.Team.Add(startHeroPlayer1);
-        Player2.Team.Add(startHeroPlayer2);
+        Player1.AddHero(startHeroPlayer1);
+        Player2.AddHero(startHeroPlayer2);
 
         battleManager.BattleEnded += OnBattleEnded;
         StartBattle();
@@ -32,14 +39,16 @@ public class GameManager : MonoBehaviour
     {
         Round++;
         State = GameState.Battle;
+        currentRewardPlayer = null;
         battleManager.StartBattle(Player1.Team, Player2.Team);
     }
 
     private void OnBattleEnded(BattleResult result)
     {
         // проигравший бой теряет жизнь, при ничьей никто
-        if (result == BattleResult.LeftWon) Player2.LoseLife();
-        else if (result == BattleResult.RightWon) Player1.LoseLife();
+        loser = null;
+        if (result == BattleResult.LeftWon) { Player2.LoseLife(); loser = Player2; }
+        else if (result == BattleResult.RightWon) { Player1.LoseLife(); loser = Player1; }
 
         if (!Player1.IsAlive || !Player2.IsAlive)
         {
@@ -49,32 +58,118 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        State = GameState.Reward;
-        StartCoroutine(RewardPhase());
+        StartRewardPhase();
     }
 
-    private IEnumerator RewardPhase()
+    // ---------- Награды ----------
+
+    private void StartRewardPhase()
     {
-        // TODO этап 5: выбор наград. Пока просто пауза.
-        yield return new WaitForSeconds(pauseAfterBattle);
-        StartBattle();
+        State = GameState.Reward;
+        rewardQueue.Clear();
+        rewardQueue.Enqueue(Player1);
+        rewardQueue.Enqueue(Player2);
+        NextRewardPlayer();
     }
 
-    // Временный интерфейс, настоящий сделаем на этапе 6
+    private void NextRewardPlayer()
+    {
+        if (rewardQueue.Count == 0)
+        {
+            StartBattle();
+            return;
+        }
+
+        currentRewardPlayer = rewardQueue.Dequeue();
+        pendingReward = null;
+
+        // проигравший бой получает на один вариант больше
+        int count = rewardChoices + (currentRewardPlayer == loser ? 1 : 0);
+        currentOptions = RewardGenerator.Generate(rewardPool, currentRewardPlayer, count);
+
+        if (currentOptions.Count == 0)
+            NextRewardPlayer();   // предлагать нечего, переходим к следующему
+    }
+
+    private void ChooseReward(Reward reward)
+    {
+        if (!reward.NeedsHeroTarget)
+        {
+            reward.Apply(currentRewardPlayer, null);
+            NextRewardPlayer();
+        }
+        else if (currentRewardPlayer.Team.Count == 1)
+        {
+            reward.Apply(currentRewardPlayer, currentRewardPlayer.Team[0]);
+            NextRewardPlayer();
+        }
+        else
+        {
+            pendingReward = reward;   // ждём, пока игрок выберет героя
+        }
+    }
+
+    private void ChooseTarget(HeroRuntimeData hero)
+    {
+        pendingReward.Apply(currentRewardPlayer, hero);
+        NextRewardPlayer();
+    }
+
+    // ---------- Временный интерфейс (настоящий сделаем на этапе 6) ----------
+
     private void OnGUI()
     {
         GUI.skin.label.fontSize = 18;
         GUI.skin.button.fontSize = 18;
 
         GUI.Label(new Rect(10, 10, 500, 30), $"Раунд {Round}   Состояние: {State}");
-        GUI.Label(new Rect(10, 40, 500, 30), $"{Player1.Name}: жизни {Player1.Lives}");
-        GUI.Label(new Rect(10, 70, 500, 30), $"{Player2.Name}: жизни {Player2.Lives}");
+        GUI.Label(new Rect(10, 40, 500, 30), $"{Player1.Name}: жизни {Player1.Lives}, героев {Player1.Team.Count}");
+        GUI.Label(new Rect(10, 70, 500, 30), $"{Player2.Name}: жизни {Player2.Lives}, героев {Player2.Team.Count}");
+
+        if (State == GameState.Reward && currentRewardPlayer != null)
+            DrawRewardUI();
 
         if (State == GameState.GameOver)
         {
             GUI.Label(new Rect(10, 110, 500, 30), winnerText);
             if (GUI.Button(new Rect(10, 150, 200, 40), "Играть снова"))
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+
+    private void DrawRewardUI()
+    {
+        GUI.Label(new Rect(10, 110, 900, 30), $"{currentRewardPlayer.Name}, выберите награду:");
+        float y = 150f;
+
+        if (pendingReward == null)
+        {
+            var options = currentOptions;
+            foreach (var reward in options)
+            {
+                if (GUI.Button(new Rect(10, y, 900, 40), $"{reward.rewardName}: {reward.description}"))
+                {
+                    ChooseReward(reward);
+                    return;
+                }
+                y += 50f;
+            }
+        }
+        else
+        {
+            GUI.Label(new Rect(10, y, 900, 30), $"{pendingReward.rewardName}: кому дать?");
+            y += 40f;
+
+            foreach (var hero in currentRewardPlayer.Team)
+            {
+                string label = $"{hero.Data.heroName} (здоровье {hero.Stats.maxHealth:0}, урон {hero.Stats.damage:0})";
+                if (GUI.Button(new Rect(10, y, 900, 40), label))
+                {
+                    ChooseTarget(hero);
+                    return;
+                }
+                y += 50f;
+            }
         }
     }
 }

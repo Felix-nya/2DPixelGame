@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5837a1ac4c7d9946b0dd82ec30fc670, type: 3}
+  m_Name: ArmorBuff
+  m_EditorClassIdentifier: Assembly-CSharp::StatBuffReward
+  rewardName: ArmorBuff
+  description: 
+  icon: {fileID: 0}
+  healthPercent: 0
+  damagePercent: 0
+  attackSpeedFlat: 0
+  armorFlat: 2
