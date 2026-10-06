@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
+    [SerializeField] private HealthBar healthBar;
     public Team Team { get; private set; }
     public HeroData Data { get; private set; }
     public Stats Stats { get; private set; }
@@ -35,6 +36,8 @@ public class Hero : MonoBehaviour
         this.battle = battle;
         targeting = TargetingFactory.Create(data.targetingType);
         CurrentHealth = Stats.maxHealth;
+        healthBar.SetColor(team == Team.Left ? Color.green : Color.red);
+        UpdateHealthBar();
         abilityTimer = data.ability != null ? data.ability.cooldown : 0f;
 
         var sr = GetComponent<SpriteRenderer>();
@@ -105,7 +108,7 @@ public class Hero : MonoBehaviour
     public void TakeDamage(float amount, Hero attacker = null)
     {
         CurrentHealth -= amount;
-
+        UpdateHealthBar();
         if (CurrentHealth <= 0f)
         {
             Died?.Invoke(this);
@@ -123,11 +126,18 @@ public class Hero : MonoBehaviour
     public void Heal(float amount)
     {
         CurrentHealth = Mathf.Min(CurrentHealth + amount, Stats.maxHealth);
+        UpdateHealthBar();
     }
 
     public void AddArmorBuff(float amount, float duration)
     {
         StartCoroutine(ArmorBuffRoutine(amount, duration));
+    }
+
+    private void UpdateHealthBar()
+    {
+        if (healthBar != null)
+            healthBar.SetRatio(CurrentHealth / Stats.maxHealth);
     }
 
     private IEnumerator ArmorBuffRoutine(float amount, float duration)
