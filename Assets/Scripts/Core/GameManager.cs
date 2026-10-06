@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     public PlayerData Player2 { get; private set; }
     public GameState State { get; private set; }
     public int Round { get; private set; }
+    public PlayerData CurrentRewardPlayer => currentRewardPlayer;
+    public IReadOnlyList<Reward> CurrentOptions => currentOptions;
+    public Reward PendingReward => pendingReward;
 
     public event System.Action Changed;
 
@@ -96,7 +99,7 @@ public class GameManager : MonoBehaviour
             NextRewardPlayer();   // предлагать нечего, переходим к следующему
     }
 
-    private void ChooseReward(Reward reward)
+    public void ChooseReward(Reward reward)
     {
         if (!reward.NeedsHeroTarget)
         {
@@ -111,10 +114,11 @@ public class GameManager : MonoBehaviour
         else
         {
             pendingReward = reward;   // ждём, пока игрок выберет героя
+            NotifyChanged();
         }
     }
 
-    private void ChooseTarget(HeroRuntimeData hero)
+    public void ChooseTarget(HeroRuntimeData hero)
     {
         pendingReward.Apply(currentRewardPlayer, hero);
         NextRewardPlayer();
@@ -127,50 +131,11 @@ public class GameManager : MonoBehaviour
         GUI.skin.label.fontSize = 18;
         GUI.skin.button.fontSize = 18;
 
-        if (State == GameState.Reward && currentRewardPlayer != null)
-            DrawRewardUI();
-
         if (State == GameState.GameOver)
         {
             GUI.Label(new Rect(10, 110, 500, 30), winnerText);
             if (GUI.Button(new Rect(10, 150, 200, 40), "Играть снова"))
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-    }
-
-    private void DrawRewardUI()
-    {
-        GUI.Label(new Rect(10, 110, 900, 30), $"{currentRewardPlayer.Name}, выберите награду:");
-        float y = 150f;
-
-        if (pendingReward == null)
-        {
-            var options = currentOptions;
-            foreach (var reward in options)
-            {
-                if (GUI.Button(new Rect(10, y, 900, 40), $"{reward.rewardName}: {reward.description}"))
-                {
-                    ChooseReward(reward);
-                    return;
-                }
-                y += 50f;
-            }
-        }
-        else
-        {
-            GUI.Label(new Rect(10, y, 900, 30), $"{pendingReward.rewardName}: кому дать?");
-            y += 40f;
-
-            foreach (var hero in currentRewardPlayer.Team)
-            {
-                string label = $"{hero.Data.heroName} (здоровье {hero.Stats.maxHealth:0}, урон {hero.Stats.damage:0}, предметов {hero.Items.Count})";
-                if (GUI.Button(new Rect(10, y, 900, 40), label))
-                {
-                    ChooseTarget(hero);
-                    return;
-                }
-                y += 50f;
-            }
         }
     }
 
