@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public GameState State { get; private set; }
     public int Round { get; private set; }
 
+    public event System.Action Changed;
+
     private string winnerText = "";
 
     private readonly Queue<PlayerData> rewardQueue = new Queue<PlayerData>();
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour
         State = GameState.Battle;
         currentRewardPlayer = null;
         battleManager.StartBattle(Player1.Team, Player2.Team);
+        NotifyChanged();
     }
 
     private void OnBattleEnded(BattleResult result)
@@ -55,6 +58,7 @@ public class GameManager : MonoBehaviour
             State = GameState.GameOver;
             winnerText = Player1.IsAlive ? $"Победил {Player1.Name}!" : $"Победил {Player2.Name}!";
             Debug.Log(winnerText);
+            NotifyChanged();
             return;
         }
 
@@ -86,6 +90,7 @@ public class GameManager : MonoBehaviour
         // проигравший бой получает на один вариант больше
         int count = rewardChoices + (currentRewardPlayer == loser ? 1 : 0);
         currentOptions = RewardGenerator.Generate(rewardPool, currentRewardPlayer, count);
+        NotifyChanged();
 
         if (currentOptions.Count == 0)
             NextRewardPlayer();   // предлагать нечего, переходим к следующему
@@ -121,10 +126,6 @@ public class GameManager : MonoBehaviour
     {
         GUI.skin.label.fontSize = 18;
         GUI.skin.button.fontSize = 18;
-
-        GUI.Label(new Rect(10, 10, 500, 30), $"Раунд {Round}   Состояние: {State}");
-        GUI.Label(new Rect(10, 40, 500, 30), $"{Player1.Name}: жизни {Player1.Lives}, героев {Player1.Team.Count}");
-        GUI.Label(new Rect(10, 70, 500, 30), $"{Player2.Name}: жизни {Player2.Lives}, героев {Player2.Team.Count}");
 
         if (State == GameState.Reward && currentRewardPlayer != null)
             DrawRewardUI();
@@ -171,5 +172,10 @@ public class GameManager : MonoBehaviour
                 y += 50f;
             }
         }
+    }
+
+    private void NotifyChanged()
+    {
+        Changed?.Invoke();
     }
 }
