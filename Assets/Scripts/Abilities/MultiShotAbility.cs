@@ -17,8 +17,8 @@ public class MultiShotAbility : Ability
 
         for (int i = 0; i < shots; i++)
         {
-            if (!target.IsAlive) break;
-            target.TakeDamage(DamageCalculator.Calculate(damagePerShot, target.Armor));
+            if (!target.IsAlive || !caster.IsAlive) break;
+            caster.DealDamage(target, damagePerShot, DamageSource.Ability);
         }
         return true;
     }

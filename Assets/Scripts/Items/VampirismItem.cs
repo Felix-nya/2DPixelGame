@@ -5,12 +5,9 @@ public class VampirismItem : ItemData
 {
     public float lifestealPercent = 10f;
 
-    public override void OnDamageDealt(Hero owner, Hero target, float damageDealt)
+    public override void OnDamageDealt(Hero owner, Hero target, float damageDealt, DamageSource source)
     {
         if (!owner.IsAlive) return;
-
-        float healed = damageDealt * lifestealPercent / 100f;
-        Debug.Log($"[временно] {owner.Data.heroName}: вампиризм лечит на {healed:0.0}");
-        owner.Heal(healed);
+        owner.Heal(damageDealt * lifestealPercent / 100f);
     }
 }

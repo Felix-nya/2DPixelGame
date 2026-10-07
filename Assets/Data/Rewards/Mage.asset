@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Mage
   m_EditorClassIdentifier: Assembly-CSharp::NewHeroReward
   rewardName: "\u0420\u0435\u043A\u0440\u0443\u0442 \u043C\u0430\u0433"
-  description: 
+  description: "\u041D\u0430\u0451\u043C \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0430:
+    \u043C\u0430\u0433"
   icon: {fileID: 0}
   hero: {fileID: 11400000, guid: 7feeb1a1d1421d440bdee06bb617358a, type: 2}

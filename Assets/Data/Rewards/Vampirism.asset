@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Vampirism
   m_EditorClassIdentifier: Assembly-CSharp::ItemReward
   rewardName: "\u0412\u0430\u043C\u043F\u0438\u0440\u0438\u0437\u043C"
-  description: "10% \u0445\u0438\u043B\u0430 \u043E\u0442 \u043D\u0430\u043D\u0435\u0441\u0451\u043D\u043D\u043E\u0433\u043E
-    \u0443\u0440\u043E\u043D\u0430"
+  description: "\u041B\u0435\u0447\u0438\u0442 40% \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F
+    \u043E\u0442 \u043D\u0430\u043D\u043E\u0441\u0438\u043C\u043E\u0433\u043E \u0443\u0440\u043E\u043D\u0430"
   icon: {fileID: 0}
   item: {fileID: 11400000, guid: d460e7147151e4a41a532d3d3a7f3c11, type: 2}

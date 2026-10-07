@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5837a1ac4c7d9946b0dd82ec30fc670, type: 3}
   m_Name: HealthBuff
   m_EditorClassIdentifier: Assembly-CSharp::StatBuffReward
-  rewardName: HealthBuff
-  description: 
+  rewardName: "\u041F\u043E\u0432\u044B\u0448\u0435\u043D\u0438\u0435 \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F"
+  description: "\u041F\u043E\u0432\u044B\u0448\u0430\u0435\u0442 \u0437\u0430\u043F\u0430\u0441
+    \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u044F \u043D\u0430 20%"
   icon: {fileID: 0}
-  healthPercent: 15
+  healthPercent: 20
   damagePercent: 0
   attackSpeedFlat: 0
   armorFlat: 0

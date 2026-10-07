@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213b2dbc440d1e644858fd96b67d641f, type: 3}
   m_Name: RageItem
   m_EditorClassIdentifier: Assembly-CSharp::RageItem
-  itemName: Rage
+  itemName: "\u042F\u0440\u043E\u0441\u0442\u044C"
   description: 
   icon: {fileID: 0}
-  healthThresholdPercent: 30
-  damageMultiplier: 1.5
+  healthThresholdPercent: 60
+  damageMultiplier: 2

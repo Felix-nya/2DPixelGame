@@ -5,14 +5,11 @@ public class ThornsItem : ItemData
 {
     public float reflectPercent = 10f;
 
-    public override void OnDamageTaken(Hero owner, Hero attacker, float damageTaken)
+    public override void OnDamageTaken(Hero owner, Hero attacker, float damageTaken, DamageSource source)
     {
         if (!attacker.IsAlive) return;
 
-        float reflected = damageTaken * reflectPercent / 100f;
-        Debug.Log($"[временно] {owner.Data.heroName}: шипы отражают {reflected:0.0}");
-
-        // attacker не передаём, чтобы шипы не запускали цепочку отражений
-        attacker.TakeDamage(reflected);
+        // чистый урон без брони и предметов (attacker не передаём), чтобы не было цепочек отражений
+        attacker.TakeDamage(damageTaken * reflectPercent / 100f);
     }
 }

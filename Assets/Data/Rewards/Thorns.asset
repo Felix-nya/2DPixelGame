@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Thorns
   m_EditorClassIdentifier: Assembly-CSharp::ItemReward
   rewardName: "\u0428\u0438\u043F\u044B"
-  description: "\u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 10%
+  description: "\u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 60%
     \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u043D\u043E\u0433\u043E \u0443\u0440\u043E\u043D\u0430"
   icon: {fileID: 0}
   item: {fileID: 11400000, guid: c3c92b13b1e411f43bca80561906262b, type: 2}

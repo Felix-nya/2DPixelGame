@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 540ce31809fc9c54da0a6a1d31b4180d, type: 3}
   m_Name: AreaDamage
   m_EditorClassIdentifier: Assembly-CSharp::AreaDamageAbility
-  abilityName: AreaDamage
-  description: 
+  abilityName: "\u0412\u0437\u0440\u044B\u0432"
+  description: "\u041F\u0435\u0440\u0435\u0437\u0430\u0440\u044F\u0434\u043A\u0430:
+    6 \u0441\u0435\u043A\u0443\u043D\u0434, \u043D\u0430\u043D\u043E\u0441\u0438\u0442
+    \u0443\u0440\u043E\u043D \u0432 30 \u0435\u0434\u0438\u043D\u0438\u0446 \u0432
+    \u043E\u0433\u0440\u043E\u043C\u043D\u043E\u0439 \u043E\u0431\u043B\u0430\u0441\u0442\u0438"
   cooldown: 6
-  damage: 25
-  castRange: 5
-  radius: 2
+  damage: 30
+  castRange: 6
+  radius: 3

@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
-  heroName: Warrior
+  heroName: "\u0412\u043E\u0438\u043D"
   role: 0
   spriteLeftTeam: {fileID: 1841735198376274379, guid: 6f7d70ab7f5298043a2885e25b75f66a, type: 3}
   spriteRightTeam: {fileID: -3571130556478426072, guid: f4f7267bb2fe9f64caf8396479b368eb, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
-    maxHealth: 140
-    damage: 12
+    maxHealth: 160
+    damage: 10
     attackSpeed: 1
     range: 1.2
     moveSpeed: 2.5
-    armor: 3
+    armor: 6
   targetingType: 0
   ability: {fileID: 11400000, guid: 120f78f576722ce4da8d6e9ad645adce, type: 2}

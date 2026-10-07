@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
   m_Name: Mage
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
-  heroName: Mage
+  heroName: "\u041C\u0430\u0433"
   role: 2
   spriteLeftTeam: {fileID: 447248055226465854, guid: 7bcea8670d80ce446a443db1edce303d, type: 3}
   spriteRightTeam: {fileID: 4695546510137771435, guid: e12a0e54221a4314b939108e16663a08, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
-    maxHealth: 70
-    damage: 16
-    attackSpeed: 0.7
+    maxHealth: 80
+    damage: 18
+    attackSpeed: 0.8
     range: 5
     moveSpeed: 2
-    armor: 0
-  targetingType: 1
+    armor: 2
+  targetingType: 0
   ability: {fileID: 11400000, guid: 340938607e4f29149868982682f1bab0, type: 2}

@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
   m_Name: Priest
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
-  heroName: Priest
+  heroName: "\u0416\u0440\u0435\u0446"
   role: 3
   spriteLeftTeam: {fileID: -3086008009350907632, guid: b5c048ce0102be247884f1dd0b3091fa, type: 3}
   spriteRightTeam: {fileID: 1882240329132556675, guid: 711d9d15ca5c19048995adac00506d92, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
-    maxHealth: 90
-    damage: 5
-    attackSpeed: 0.8
+    maxHealth: 135
+    damage: 10
+    attackSpeed: 0.85
     range: 4
     moveSpeed: 2
-    armor: 1
+    armor: 2
   targetingType: 0
   ability: {fileID: 11400000, guid: c4b52a8c60d096948b4f73440651fbd7, type: 2}

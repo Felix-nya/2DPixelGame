@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5837a1ac4c7d9946b0dd82ec30fc670, type: 3}
   m_Name: DamageBuff
   m_EditorClassIdentifier: Assembly-CSharp::StatBuffReward
-  rewardName: DamageBuff
-  description: 
+  rewardName: "\u041F\u043E\u0432\u044B\u0448\u0435\u043D\u0438\u0435 \u0443\u0440\u043E\u043D\u0430"
+  description: "\u041F\u043E\u0432\u044B\u0448\u0430\u0435\u0442 \u043D\u0430\u043D\u043E\u0441\u0438\u043C\u044B\u0439
+    \u0443\u0440\u043E\u043D \u043D\u0430 25%"
   icon: {fileID: 0}
   healthPercent: 0
-  damagePercent: 10
+  damagePercent: 25
   attackSpeedFlat: 0
   armorFlat: 0

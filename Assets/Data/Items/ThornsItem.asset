@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d83ee0def0289b419b7c7ab2d37055d, type: 3}
   m_Name: ThornsItem
   m_EditorClassIdentifier: Assembly-CSharp::ThornsItem
-  itemName: Thorns
+  itemName: "\u0428\u0438\u043F\u044B"
   description: 
   icon: {fileID: 0}
-  reflectPercent: 10
+  reflectPercent: 60

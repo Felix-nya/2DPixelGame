@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1e1398dfb3840e47ab73d0c65579665, type: 3}
   m_Name: ArmorBuff
   m_EditorClassIdentifier: Assembly-CSharp::ArmorBuffAbility
-  abilityName: ArmorBuff
-  description: 
-  cooldown: 5
-  armorBonus: 3
+  abilityName: "\u0411\u043E\u0435\u0432\u043E\u0439 \u043A\u043B\u0438\u0447"
+  description: "\u041F\u0435\u0440\u0435\u0437\u0430\u0440\u044F\u0434\u043A\u0430
+    6 \u0441\u0435\u043A\u0443\u043D\u0434. \u041F\u043E\u0432\u044B\u0448\u0430\u0435\u0442
+    \u0431\u0440\u043E\u043D\u044E \u043D\u0430\u0445\u043E\u0434\u044F\u0449\u0438\u0445\u0441\u044F
+    \u043F\u043E\u0431\u043B\u0438\u0437\u043E\u0441\u0442\u0438 \u0441\u0443\u0449\u0435\u0441\u0442\u0432."
+  cooldown: 6
+  armorBonus: 2
   duration: 3

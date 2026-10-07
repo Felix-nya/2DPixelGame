@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5837a1ac4c7d9946b0dd82ec30fc670, type: 3}
   m_Name: AttackSpeedBuff
   m_EditorClassIdentifier: Assembly-CSharp::StatBuffReward
-  rewardName: AttackSpeed
-  description: 
+  rewardName: "\u041F\u043E\u0432\u044B\u0448\u0435\u043D\u0438\u0435 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u0438
+    \u0430\u0442\u0430\u043A\u0438"
+  description: "\u041F\u043E\u0432\u044B\u0448\u0430\u0435\u0442 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C
+    \u0430\u0442\u0430\u043A\u0438 \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u043C\u0443
+    \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443"
   icon: {fileID: 0}
   healthPercent: 0
   damagePercent: 0
-  attackSpeedFlat: 0.1
+  attackSpeedFlat: 0.3
   armorFlat: 0

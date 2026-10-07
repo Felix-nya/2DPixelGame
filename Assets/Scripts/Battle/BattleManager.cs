@@ -16,6 +16,7 @@ public class BattleManager : MonoBehaviour
 
     public IReadOnlyList<Hero> Heroes => heroes;
     public bool IsActive => battleActive;
+    public float TimeLeft => Mathf.Max(0f, battleTimeout - battleTimer);
 
     public event Action<BattleResult> BattleEnded;
 
@@ -52,11 +53,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (!battleActive) return;
 
-        battleTimer += Time.deltaTime;
+        battleTimer += Time.fixedDeltaTime;
         if (battleTimer >= battleTimeout)
             EndBattle(ResolveByHealth());
     }

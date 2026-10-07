@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779d79fd6c29b774494345f7c8ecb946, type: 3}
   m_Name: VampirismItem
   m_EditorClassIdentifier: Assembly-CSharp::VampirismItem
-  itemName: Vampirism
+  itemName: "\u0412\u0430\u043C\u043F\u0438\u0440\u0438\u0437\u043C"
   description: 
   icon: {fileID: 0}
-  lifestealPercent: 10
+  lifestealPercent: 40
