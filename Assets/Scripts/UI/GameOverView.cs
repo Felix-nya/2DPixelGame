@@ -9,11 +9,13 @@ public class GameOverView : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text winnerText;
     [SerializeField] private Button restartButton;
+    [SerializeField] private Button menuButton;
 
     private void Start()
     {
         gameManager.Changed += Refresh;
         restartButton.onClick.AddListener(Restart);
+        menuButton.onClick.AddListener(() => SceneManager.LoadScene(SceneNames.MainMenu));
         Refresh();
     }
 
@@ -34,6 +36,6 @@ public class GameOverView : MonoBehaviour
 
     private void Restart()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneNames.Game);
     }
 }
