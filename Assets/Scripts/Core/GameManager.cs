@@ -139,22 +139,40 @@ public class GameManager : MonoBehaviour
         {
             reward.Apply(currentRewardPlayer, null);
             NextRewardPlayer();
+            return;
         }
-        else if (currentRewardPlayer.Team.Count == 1)
+
+        var targets = GetValidTargets(reward);
+
+        if (targets.Count == 1)
         {
-            reward.Apply(currentRewardPlayer, currentRewardPlayer.Team[0]);
+            // подходит один герой, выбирать не из чего
+            reward.Apply(currentRewardPlayer, targets[0]);
             NextRewardPlayer();
         }
-        else
+        else if (targets.Count > 1)
         {
             pendingReward = reward;   // ждём, пока игрок выберет героя
             NotifyChanged();
         }
+        // если подходящих героев нет, награда не попала бы в предложения (см. IsAvailable)
     }
 
     public void ChooseTarget(HeroRuntimeData hero)
     {
         pendingReward.Apply(currentRewardPlayer, hero);
         NextRewardPlayer();
+    }
+
+    // герои текущего игрока, которым можно дать эту награду
+    public List<HeroRuntimeData> GetValidTargets(Reward reward)
+    {
+        var result = new List<HeroRuntimeData>();
+        foreach (var hero in currentRewardPlayer.Team)
+        {
+            if (reward.CanTarget(hero))
+                result.Add(hero);
+        }
+        return result;
     }
 }

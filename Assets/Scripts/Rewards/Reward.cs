@@ -9,8 +9,20 @@ public abstract class Reward : ScriptableObject
     // нужно ли игроку выбирать героя, которому достанется награда
     public virtual bool NeedsHeroTarget => true;
 
-    // можно ли предлагать награду этому игроку (например, команда уже полная)
-    public virtual bool IsAvailable(PlayerData player) => true;
+    // можно ли дать награду именно этому герою
+    public virtual bool CanTarget(HeroRuntimeData hero) => true;
+
+    // можно ли предлагать награду игроку: нужен хотя бы один подходящий герой
+    public virtual bool IsAvailable(PlayerData player)
+    {
+        if (!NeedsHeroTarget) return true;
+
+        foreach (var hero in player.Team)
+        {
+            if (CanTarget(hero)) return true;
+        }
+        return false;
+    }
 
     public abstract void Apply(PlayerData player, HeroRuntimeData target);
 }

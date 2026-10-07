@@ -43,10 +43,10 @@ public class RewardView : MonoBehaviour
         {
             titleText.text = $"{gameManager.PendingReward.rewardName}: кому дать?";
 
-            foreach (var hero in gameManager.CurrentRewardPlayer.Team)
+            foreach (var hero in gameManager.GetValidTargets(gameManager.PendingReward))
             {
                 HeroRuntimeData h = hero;
-                string info = $"Здоровье: {h.Stats.maxHealth:0}\nУрон: {h.Stats.damage:0}\nПредметов: {h.Items.Count}";
+                string info = $"Здоровье: {h.Stats.maxHealth:0}\nУрон: {h.Stats.damage:0}\nПредметы: {h.ItemsText}";
                 CreateCard(h.Data.heroName, info, HeroSprite(h), () => gameManager.ChooseTarget(h));
             }
         }

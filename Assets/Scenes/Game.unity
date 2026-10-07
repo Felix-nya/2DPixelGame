@@ -396,6 +396,8 @@ MonoBehaviour:
   speeds:
   - 1
   - 2
+  - 4
+  - 8
 --- !u!1 &138238559
 GameObject:
   m_ObjectHideFlags: 0
