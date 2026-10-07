@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
-    [SerializeField] private HeroData startHeroPlayer1;   // временно, до экрана выбора героя
-    [SerializeField] private HeroData startHeroPlayer2;
+    [SerializeField] private List<HeroData> availableHeroes = new List<HeroData>();
     [SerializeField] private int startingLives = 3;
     [SerializeField] private List<Reward> rewardPool = new List<Reward>();
     [SerializeField] private int rewardChoices = 3;
@@ -15,16 +13,22 @@ public class GameManager : MonoBehaviour
     public PlayerData Player2 { get; private set; }
     public GameState State { get; private set; }
     public int Round { get; private set; }
+    public PlayerData Winner { get; private set; }
+
+    // для экрана выбора героя
+    public IReadOnlyList<HeroData> StartingHeroes => availableHeroes;
+    public PlayerData CurrentPickPlayer => currentPickPlayer;
+
+    // для экрана выбора награды
     public PlayerData CurrentRewardPlayer => currentRewardPlayer;
     public IReadOnlyList<Reward> CurrentOptions => currentOptions;
     public Reward PendingReward => pendingReward;
 
     public event System.Action Changed;
 
-    private string winnerText = "";
-
     private readonly Queue<PlayerData> rewardQueue = new Queue<PlayerData>();
     private PlayerData loser;
+    private PlayerData currentPickPlayer;
     private PlayerData currentRewardPlayer;
     private List<Reward> currentOptions = new List<Reward>();
     private Reward pendingReward;   // награда, для которой ждём выбор героя
@@ -33,12 +37,42 @@ public class GameManager : MonoBehaviour
     {
         Player1 = new PlayerData("Игрок 1", startingLives);
         Player2 = new PlayerData("Игрок 2", startingLives);
-        Player1.AddHero(startHeroPlayer1);
-        Player2.AddHero(startHeroPlayer2);
 
         battleManager.BattleEnded += OnBattleEnded;
-        StartBattle();
+        StartHeroSelect();
     }
+
+    private void NotifyChanged()
+    {
+        Changed?.Invoke();
+    }
+
+    // ---------- Выбор стартового героя ----------
+
+    private void StartHeroSelect()
+    {
+        State = GameState.HeroSelect;
+        currentPickPlayer = Player1;
+        NotifyChanged();
+    }
+
+    public void PickStartHero(HeroData hero)
+    {
+        currentPickPlayer.AddHero(hero);
+
+        if (currentPickPlayer == Player1)
+        {
+            currentPickPlayer = Player2;
+            NotifyChanged();
+        }
+        else
+        {
+            currentPickPlayer = null;
+            StartBattle();
+        }
+    }
+
+    // ---------- Бой ----------
 
     private void StartBattle()
     {
@@ -59,8 +93,8 @@ public class GameManager : MonoBehaviour
         if (!Player1.IsAlive || !Player2.IsAlive)
         {
             State = GameState.GameOver;
-            winnerText = Player1.IsAlive ? $"Победил {Player1.Name}!" : $"Победил {Player2.Name}!";
-            Debug.Log(winnerText);
+            Winner = Player1.IsAlive ? Player1 : Player2;
+            Debug.Log($"Победил {Winner.Name}!");
             NotifyChanged();
             return;
         }
@@ -122,25 +156,5 @@ public class GameManager : MonoBehaviour
     {
         pendingReward.Apply(currentRewardPlayer, hero);
         NextRewardPlayer();
-    }
-
-    // ---------- Временный интерфейс (настоящий сделаем на этапе 6) ----------
-
-    private void OnGUI()
-    {
-        GUI.skin.label.fontSize = 18;
-        GUI.skin.button.fontSize = 18;
-
-        if (State == GameState.GameOver)
-        {
-            GUI.Label(new Rect(10, 110, 500, 30), winnerText);
-            if (GUI.Button(new Rect(10, 150, 200, 40), "Играть снова"))
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-    }
-
-    private void NotifyChanged()
-    {
-        Changed?.Invoke();
     }
 }
