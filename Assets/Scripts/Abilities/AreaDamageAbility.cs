@@ -22,7 +22,7 @@ public class AreaDamageAbility : Ability
             if (!other.IsAlive || other.Team == caster.Team) continue;
 
             if (Vector2.Distance(center, other.transform.position) <= radius)
-                caster.DealDamage(other, damage, DamageSource.Ability);
+                caster.DealDamage(other, damage, DamageSource.Ability, canCrit);
         }
         return true;
     }

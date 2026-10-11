@@ -38,7 +38,7 @@ public class HeroSelectView : MonoBehaviour
             HeroData h = hero;   // копия для замыкания
             Stats s = h.baseStats;
             string ability = h.ability != null ? h.ability.abilityName : "нет";
-            string info = $"Здоровье: {s.maxHealth:0}\nУрон: {s.damage:0}\nБроня: {s.armor:0}\nСпособность: {ability}";
+            string info = $"Здоровье: {s.maxHealth:0}\nУрон: {s.damage:0}\nБроня: {s.armor:0}\nКрит: {s.critChance:0}% / {s.critDamage:0}%\nСпособность: {ability}";
 
             Sprite sprite = isLeft ? h.spriteLeftTeam : h.spriteRightTeam;
             if (sprite == null) sprite = h.spriteLeftTeam;

@@ -46,7 +46,7 @@ public class RewardView : MonoBehaviour
             foreach (var hero in gameManager.GetValidTargets(gameManager.PendingReward))
             {
                 HeroRuntimeData h = hero;
-                string info = $"Здоровье: {h.Stats.maxHealth:0}\nУрон: {h.Stats.damage:0}\nПредметы: {h.ItemsText}";
+                string info = $"Здоровье: {h.Stats.maxHealth:0}\nУрон: {h.Stats.damage:0}\nКрит: {h.Stats.critChance:0}% / {h.Stats.critDamage:0}%\nПредметы: {h.ItemsText}";
                 CreateCard(h.Data.heroName, info, HeroSprite(h), () => gameManager.ChooseTarget(h));
             }
         }

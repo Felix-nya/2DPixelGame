@@ -130,7 +130,7 @@ public class Hero : MonoBehaviour
     // ---------- Урон ----------
 
     // Единственный путь нанесения урона: атаки и способности вызывают его.
-    public void DealDamage(Hero victim, float baseDamage, DamageSource source)
+    public void DealDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)
     {
         if (!IsAlive || !victim.IsAlive) return;
 
@@ -139,6 +139,13 @@ public class Hero : MonoBehaviour
         {
             if (item.AppliesTo(source))
                 damage = item.ModifyOutgoingDamage(this, victim, damage, source);
+        }
+
+        if (canCrit)
+        {
+            damage = DamageCalculator.RollCrit(damage, Stats.critChance, Stats.critDamage, out bool isCrit);
+            if (isCrit)
+                Debug.Log($"[временно] {Data.heroName}: КРИТ, урон до брони {damage:0.0}");
         }
 
         float dealt = DamageCalculator.Calculate(damage, victim.Armor);

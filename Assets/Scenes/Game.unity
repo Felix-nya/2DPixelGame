@@ -396,8 +396,7 @@ MonoBehaviour:
   speeds:
   - 1
   - 2
-  - 4
-  - 8
+  - 3
 --- !u!1 &138238559
 GameObject:
   m_ObjectHideFlags: 0
@@ -2682,6 +2681,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e1eb9b87da2548a44a5fbbfeab229374, type: 2}
   - {fileID: 11400000, guid: ad77609dadba642468a139941c556bc1, type: 2}
   - {fileID: 11400000, guid: d1f565ed496f17045aea235591a34349, type: 2}
+  - {fileID: 11400000, guid: ca5d9e9e25d366b45b090a0e92f0f801, type: 2}
+  - {fileID: 11400000, guid: 02a94b9350c3bc24993a297aaa708a1e, type: 2}
   rewardChoices: 3
 --- !u!4 &1733734052
 Transform:

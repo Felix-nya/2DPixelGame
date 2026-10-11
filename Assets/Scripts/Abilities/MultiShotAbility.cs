@@ -18,7 +18,7 @@ public class MultiShotAbility : Ability
         for (int i = 0; i < shots; i++)
         {
             if (!target.IsAlive || !caster.IsAlive) break;
-            caster.DealDamage(target, damagePerShot, DamageSource.Ability);
+            caster.DealDamage(target, damagePerShot, DamageSource.Ability, canCrit);
         }
         return true;
     }

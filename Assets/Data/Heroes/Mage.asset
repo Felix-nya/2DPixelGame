@@ -24,5 +24,7 @@ MonoBehaviour:
     range: 5
     moveSpeed: 2
     armor: 2
+    critChance: 10
+    critDamage: 150
   targetingType: 0
   ability: {fileID: 11400000, guid: 340938607e4f29149868982682f1bab0, type: 2}
