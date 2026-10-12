@@ -19,6 +19,8 @@ public class Hero : MonoBehaviour
     public float Armor => Stats.armor + BonusArmor;
 
     public event Action<Hero> Died;
+    public event Action<Hero, float, bool> DamageTaken;   // герой, урон, был ли крит
+    public event Action<Hero, float> Healed;              // герой, сколько реально вылечено
 
     private class ArmorBuff
     {
@@ -141,15 +143,12 @@ public class Hero : MonoBehaviour
                 damage = item.ModifyOutgoingDamage(this, victim, damage, source);
         }
 
+        bool isCrit = false;
         if (canCrit)
-        {
-            damage = DamageCalculator.RollCrit(damage, Stats.critChance, Stats.critDamage, out bool isCrit);
-            if (isCrit)
-                Debug.Log($"[временно] {Data.heroName}: КРИТ, урон до брони {damage:0.0}");
-        }
+            damage = DamageCalculator.RollCrit(damage, Stats.critChance, Stats.critDamage, out isCrit);
 
         float dealt = DamageCalculator.Calculate(damage, victim.Armor);
-        victim.TakeDamage(dealt, this, source);
+        victim.TakeDamage(dealt, this, source, isCrit);
 
         foreach (var item in items)
         {
@@ -159,12 +158,13 @@ public class Hero : MonoBehaviour
     }
 
     // Применяет уже готовый урон (броня учтена). attacker нужен только для реакций предметов.
-    public void TakeDamage(float amount, Hero attacker = null, DamageSource source = DamageSource.Attack)
+    public void TakeDamage(float amount, Hero attacker = null, DamageSource source = DamageSource.Attack, bool isCrit = false)
     {
         if (!IsAlive) return;
 
         CurrentHealth -= amount;
         UpdateHealthBar();
+        DamageTaken?.Invoke(this, amount, isCrit);
 
         if (CurrentHealth <= 0f)
         {
@@ -184,8 +184,13 @@ public class Hero : MonoBehaviour
 
     public void Heal(float amount)
     {
+        float before = CurrentHealth;
         CurrentHealth = Mathf.Min(CurrentHealth + amount, Stats.maxHealth);
         UpdateHealthBar();
+
+        float healed = CurrentHealth - before;
+        if (healed > 0f)
+            Healed?.Invoke(this, healed);
     }
 
     // ---------- Баффы ----------

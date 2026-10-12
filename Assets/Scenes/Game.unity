@@ -1406,6 +1406,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 758553403}
   m_CullTransparentMesh: 1
+--- !u!1 &767820623
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 767820625}
+  - component: {fileID: 767820624}
+  m_Layer: 0
+  m_Name: DamagePopupSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &767820624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767820623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80e24065cac7c14da6d09d4e20a0b48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamagePopupSpawner
+  battleManager: {fileID: 188793505}
+  prefab: {fileID: 2292014681244533505, guid: a2c7328fc198b4d488431633813deb9c, type: 3}
+  damageColor: {r: 1, g: 1, b: 1, a: 1}
+  critColor: {r: 1, g: 0.8, b: 0.1, a: 1}
+  healColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  heightOffset: 0.9
+--- !u!4 &767820625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767820623}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &778140343
 GameObject:
   m_ObjectHideFlags: 0
@@ -2988,3 +3038,4 @@ SceneRoots:
   - {fileID: 143635278}
   - {fileID: 441239316}
   - {fileID: 962992100}
+  - {fileID: 767820625}

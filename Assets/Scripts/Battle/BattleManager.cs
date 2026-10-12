@@ -19,6 +19,8 @@ public class BattleManager : MonoBehaviour
     public float TimeLeft => Mathf.Max(0f, battleTimeout - battleTimer);
 
     public event Action<BattleResult> BattleEnded;
+    public event Action<Hero, float, bool> HeroDamaged;
+    public event Action<Hero, float> HeroHealed;
 
     public void StartBattle(List<HeroRuntimeData> leftTeam, List<HeroRuntimeData> rightTeam)
     {
@@ -49,6 +51,8 @@ public class BattleManager : MonoBehaviour
             Hero hero = Instantiate(heroPrefab, position, Quaternion.identity);
             hero.Setup(team[i], side, this);
             hero.Died += OnHeroDied;
+            hero.DamageTaken += (h, amount, crit) => HeroDamaged?.Invoke(h, amount, crit);
+            hero.Healed += (h, amount) => HeroHealed?.Invoke(h, amount);
             heroes.Add(hero);
         }
     }
