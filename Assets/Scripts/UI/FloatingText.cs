@@ -20,19 +20,13 @@ public class FloatingText : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // реальное время, чтобы цифры читались и на ускоренной скорости
         float dt = Time.fixedDeltaTime;
         age += dt;
-
         transform.position += Vector3.up * (riseSpeed * dt);
-
-        // первую половину жизни текст непрозрачный, затем тает
         float fade = Mathf.Clamp01((age - lifetime * 0.5f) / (lifetime * 0.5f));
         Color c = baseColor;
         c.a = 1f - fade;
         text.color = c;
-
-        if (age >= lifetime)
-            Destroy(gameObject);
+        if (age >= lifetime) Destroy(gameObject);
     }
 }

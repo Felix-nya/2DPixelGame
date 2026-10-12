@@ -4,7 +4,7 @@ using UnityEngine;
 public class RewardView : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
-    [SerializeField] private GameObject panel;          // панель с карточками (дочерний объект)
+    [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform cardsContainer;
     [SerializeField] private CardView cardPrefab;
@@ -26,23 +26,19 @@ public class RewardView : MonoBehaviour
         bool show = gameManager.State == GameState.Reward && gameManager.CurrentRewardPlayer != null;
         panel.SetActive(show);
         if (!show) return;
-
         ClearCards();
-
         if (gameManager.PendingReward == null)
         {
             titleText.text = $"{gameManager.CurrentRewardPlayer.Name}, выберите награду";
-
             foreach (var reward in gameManager.CurrentOptions)
             {
-                Reward r = reward;   // копия для замыкания
+                Reward r = reward;
                 CreateCard(r.rewardName, r.description, r.icon, () => gameManager.ChooseReward(r));
             }
         }
         else
         {
             titleText.text = $"{gameManager.PendingReward.rewardName}: кому дать?";
-
             foreach (var hero in gameManager.GetValidTargets(gameManager.PendingReward))
             {
                 HeroRuntimeData h = hero;
@@ -60,8 +56,7 @@ public class RewardView : MonoBehaviour
 
     private void ClearCards()
     {
-        foreach (Transform child in cardsContainer)
-            Destroy(child.gameObject);
+        foreach (Transform child in cardsContainer) Destroy(child.gameObject);
     }
 
     private Sprite HeroSprite(HeroRuntimeData hero)

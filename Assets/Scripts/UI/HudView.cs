@@ -22,8 +22,7 @@ public class HudView : MonoBehaviour
 
     private void Refresh()
     {
-        if (gameManager.Player1 == null) return;   // игра ещё не инициализирована
-
+        if (gameManager.Player1 == null) return;
         roundText.text = $"Раунд {gameManager.Round}";
         player1Text.text = FormatPlayer(gameManager.Player1);
         player2Text.text = FormatPlayer(gameManager.Player2);

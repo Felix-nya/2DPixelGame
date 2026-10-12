@@ -27,4 +27,4 @@ MonoBehaviour:
     critChance: 10
     critDamage: 150
   targetingType: 0
-  ability: {fileID: 11400000, guid: 120f78f576722ce4da8d6e9ad645adce, type: 2}
+  ability: {fileID: 11400000, guid: 8943ae8e38f1c78408c893868dcaa859, type: 2}

@@ -4,11 +4,8 @@ using UnityEngine;
 public class NewHeroReward : Reward
 {
     public HeroData hero;
-
     public override bool NeedsHeroTarget => false;
-
     public override bool IsAvailable(PlayerData player) => !player.TeamIsFull;
-
     public override void Apply(PlayerData player, HeroRuntimeData target)
     {
         player.AddHero(hero);

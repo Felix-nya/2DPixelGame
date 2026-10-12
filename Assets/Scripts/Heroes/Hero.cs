@@ -2,35 +2,28 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Hero : MonoBehaviour
 {
-    private const float RetargetInterval = 0.25f;   // как часто пересчитываем цель
+    private const float RetargetInterval = 0.25f;
+    private static readonly StatType[] AllStatTypes = (StatType[])Enum.GetValues(typeof(StatType));
 
     [SerializeField] private HealthBar healthBar;
 
     public Team Team { get; private set; }
     public HeroData Data { get; private set; }
     public Stats Stats { get; private set; }
-
     public float CurrentHealth { get; private set; }
     public bool IsAlive => CurrentHealth > 0f;
-
     public Hero CurrentTarget => target;
-    public float Armor => Stats.armor + BonusArmor;
-
+    public float Armor => Stats.armor;
     public event Action<Hero> Died;
-    public event Action<Hero, float, bool> DamageTaken;   // герой, урон, был ли крит
-    public event Action<Hero, float> Healed;              // герой, сколько реально вылечено
+    public event Action<Hero, float, bool> DamageTaken;
+    public event Action<Hero, float> Healed;
 
-    private class ArmorBuff
-    {
-        public float amount;
-        public float remaining;
-    }
-
-    private readonly List<ArmorBuff> armorBuffs = new List<ArmorBuff>();
+    private readonly List<StatModifier> modifiers = new();
     private IReadOnlyList<ItemData> items = new List<ItemData>();
-
+    private Stats baseStats;
     private BattleManager battle;
     private ITargetingStrategy targeting;
     private Hero target;
@@ -38,14 +31,15 @@ public class Hero : MonoBehaviour
     private float abilityTimer;
     private float retargetTimer;
 
-    private float BonusArmor
+    private void FixedUpdate()
     {
-        get
-        {
-            float sum = 0f;
-            foreach (var buff in armorBuffs) sum += buff.amount;
-            return sum;
-        }
+        if (battle == null || !IsAlive || !battle.IsActive) return;
+        float dt = Time.fixedDeltaTime;
+        TickModifiers(dt);
+        UpdateTarget(dt);
+        if (target == null) return;
+        UpdateAbility(dt);
+        MoveOrAttack(dt);
     }
 
     public void Setup(HeroRuntimeData runtime, Team team, BattleManager battle)
@@ -53,46 +47,110 @@ public class Hero : MonoBehaviour
         HeroData data = runtime.Data;
         Data = data;
         Team = team;
-        Stats = runtime.Stats;
+        baseStats = runtime.Stats;
+        Stats = baseStats;
+        modifiers.Clear();
         items = runtime.Items;
         this.battle = battle;
         targeting = TargetingFactory.Create(data.targetingType);
         CurrentHealth = Stats.maxHealth;
         abilityTimer = data.ability != null ? data.ability.cooldown : 0f;
-
         var sr = GetComponent<SpriteRenderer>();
-
         Sprite teamSprite = team == Team.Left ? data.spriteLeftTeam : data.spriteRightTeam;
-        bool hasOwnSprite = teamSprite != null;
-        if (!hasOwnSprite) teamSprite = data.spriteLeftTeam;   // запасной вариант
-
         if (teamSprite != null) sr.sprite = teamSprite;
-        sr.flipX = team == Team.Right && !hasOwnSprite;        // зеркалим только запасной спрайт
         sr.color = data.tint;
-
         healthBar.SetColor(team == Team.Left ? Color.green : Color.red);
         UpdateHealthBar();
     }
 
-    // Вся боевая логика идёт фиксированными шагами, поэтому не зависит от FPS
-    private void FixedUpdate()
+    public void DealDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)
     {
-        if (battle == null || !IsAlive || !battle.IsActive) return;
+        if (!IsAlive || !victim.IsAlive) return;
+        float damage = baseDamage;
+        foreach (var item in items)
+        {
+            if (item.AppliesTo(source)) damage = item.ModifyOutgoingDamage(this, victim, damage, source);
+        }
+        bool isCrit = false;
+        if (canCrit) damage = DamageCalculator.RollCrit(damage, Stats.critChance, Stats.critDamage, out isCrit);
+        float dealt = DamageCalculator.Calculate(damage, victim.Armor);
+        victim.TakeDamage(dealt, this, source, isCrit);
+        foreach (var item in items)
+        {
+            if (item.AppliesTo(source)) item.OnDamageDealt(this, victim, dealt, source);
+        }
+    }
 
-        float dt = Time.fixedDeltaTime;
+    public void TakeDamage(float amount, Hero attacker = null, DamageSource source = DamageSource.Attack, bool isCrit = false)
+    {
+        if (!IsAlive) return;
+        CurrentHealth -= amount;
+        UpdateHealthBar();
+        DamageTaken?.Invoke(this, amount, isCrit);
+        if (CurrentHealth <= 0f)
+        {
+            Died?.Invoke(this);
+            gameObject.SetActive(false);
+            return;
+        }
+        if (attacker == null) return;
+        foreach (var item in items)
+        {
+            if (item.AppliesTo(source)) item.OnDamageTaken(this, attacker, amount, source);
+        }
+    }
 
-        TickBuffs(dt);
-        UpdateTarget(dt);
-        if (target == null) return;
+    public void Heal(float amount)
+    {
+        float before = CurrentHealth;
+        CurrentHealth = Mathf.Min(CurrentHealth + amount, Stats.maxHealth);
+        UpdateHealthBar();
+        float healed = CurrentHealth - before;
+        if (healed > 0f) Healed?.Invoke(this, healed);
+    }
 
-        UpdateAbility(dt);
-        MoveOrAttack(dt);
+    public void AddModifier(StatModifier modifier)
+    {
+        modifiers.Add(modifier);
+        RecalculateStats();
+    }
+
+    private void TickModifiers(float dt)
+    {
+        bool changed = false;
+        for (int i = modifiers.Count - 1; i >= 0; i--)
+        {
+            modifiers[i].Remaining -= dt;
+            if (modifiers[i].Remaining <= 0f)
+            {
+                modifiers.RemoveAt(i);
+                changed = true;
+            }
+        }
+        if (changed) RecalculateStats();
+    }
+
+    private void RecalculateStats()
+    {
+        Stats result = baseStats;
+        foreach (var type in AllStatTypes)
+        {
+            float flat = 0f;
+            float percent = 0f;
+            foreach (var m in modifiers)
+            {
+                if (m.Stat != type) continue;
+                flat += m.Flat;
+                percent += m.Percent;
+            }
+            result.Set(type, baseStats.Get(type) * (1f + percent / 100f) + flat);
+        }
+        Stats = result;
     }
 
     private void UpdateTarget(float dt)
     {
         retargetTimer -= dt;
-
         if (target == null || !target.IsAlive || retargetTimer <= 0f)
         {
             target = targeting.ChooseTarget(this, battle.Heroes);
@@ -104,115 +162,28 @@ public class Hero : MonoBehaviour
     {
         var ability = Data.ability;
         if (ability == null) return;
-
         abilityTimer -= dt;
-        if (abilityTimer <= 0f && ability.TryUse(this, battle))
-            abilityTimer = ability.cooldown;
+        if (abilityTimer <= 0f && ability.TryUse(this, battle)) abilityTimer = ability.cooldown;
     }
 
     private void MoveOrAttack(float dt)
     {
         float distance = Vector2.Distance(transform.position, target.transform.position);
-
         if (distance > Stats.range)
         {
-            transform.position = Vector2.MoveTowards(
-                transform.position, target.transform.position, Stats.moveSpeed * dt);
+            transform.position = Vector2.MoveTowards(transform.position, target.transform.position, Stats.moveSpeed * dt);
             return;
         }
-
         attackTimer -= dt;
         if (attackTimer <= 0f)
         {
             DealDamage(target, Stats.damage, DamageSource.Attack);
-            attackTimer += 1f / Stats.attackSpeed;   // += сохраняет остаток времени
-        }
-    }
-
-    // ---------- Урон ----------
-
-    // Единственный путь нанесения урона: атаки и способности вызывают его.
-    public void DealDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)
-    {
-        if (!IsAlive || !victim.IsAlive) return;
-
-        float damage = baseDamage;
-        foreach (var item in items)
-        {
-            if (item.AppliesTo(source))
-                damage = item.ModifyOutgoingDamage(this, victim, damage, source);
-        }
-
-        bool isCrit = false;
-        if (canCrit)
-            damage = DamageCalculator.RollCrit(damage, Stats.critChance, Stats.critDamage, out isCrit);
-
-        float dealt = DamageCalculator.Calculate(damage, victim.Armor);
-        victim.TakeDamage(dealt, this, source, isCrit);
-
-        foreach (var item in items)
-        {
-            if (item.AppliesTo(source))
-                item.OnDamageDealt(this, victim, dealt, source);
-        }
-    }
-
-    // Применяет уже готовый урон (броня учтена). attacker нужен только для реакций предметов.
-    public void TakeDamage(float amount, Hero attacker = null, DamageSource source = DamageSource.Attack, bool isCrit = false)
-    {
-        if (!IsAlive) return;
-
-        CurrentHealth -= amount;
-        UpdateHealthBar();
-        DamageTaken?.Invoke(this, amount, isCrit);
-
-        if (CurrentHealth <= 0f)
-        {
-            Died?.Invoke(this);
-            gameObject.SetActive(false);
-            return;
-        }
-
-        if (attacker == null) return;
-
-        foreach (var item in items)
-        {
-            if (item.AppliesTo(source))
-                item.OnDamageTaken(this, attacker, amount, source);
-        }
-    }
-
-    public void Heal(float amount)
-    {
-        float before = CurrentHealth;
-        CurrentHealth = Mathf.Min(CurrentHealth + amount, Stats.maxHealth);
-        UpdateHealthBar();
-
-        float healed = CurrentHealth - before;
-        if (healed > 0f)
-            Healed?.Invoke(this, healed);
-    }
-
-    // ---------- Баффы ----------
-
-    public void AddArmorBuff(float amount, float duration)
-    {
-        armorBuffs.Add(new ArmorBuff { amount = amount, remaining = duration });
-    }
-
-    private void TickBuffs(float dt)
-    {
-        for (int i = armorBuffs.Count - 1; i >= 0; i--)
-        {
-            armorBuffs[i].remaining -= dt;
-            if (armorBuffs[i].remaining <= 0f)
-                armorBuffs.RemoveAt(i);
+            attackTimer += 1f / Stats.attackSpeed;
         }
     }
 
     private void UpdateHealthBar()
     {
-        if (healthBar != null)
-            healthBar.SetRatio(CurrentHealth / Stats.maxHealth);
+        if (healthBar != null) healthBar.SetRatio(CurrentHealth / Stats.maxHealth);
     }
 }

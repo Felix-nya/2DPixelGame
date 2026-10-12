@@ -12,16 +12,13 @@ public class BattleTimerView : MonoBehaviour
     {
         bool active = battleManager.IsActive;
         timerText.gameObject.SetActive(active);
-
         if (!active)
         {
             shownSeconds = -1;
             return;
         }
-
         int seconds = Mathf.CeilToInt(battleManager.TimeLeft);
-        if (seconds == shownSeconds) return;   // текст меняем только когда изменилась секунда
-
+        if (seconds == shownSeconds) return;
         shownSeconds = seconds;
         timerText.text = $"Время: {seconds} с";
     }

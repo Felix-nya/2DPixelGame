@@ -19,8 +19,6 @@ public class HealthBar : MonoBehaviour
     public void SetRatio(float ratio)
     {
         ratio = Mathf.Clamp01(ratio);
-
-        // заливка сжимается к левому краю
         fill.localScale = new Vector3(width * ratio, height, 1f);
         fill.localPosition = new Vector3(-width / 2f + width * ratio / 2f, 0f, 0f);
     }

@@ -3,7 +3,6 @@ using UnityEngine;
 
 public static class RewardGenerator
 {
-    // выбирает count случайных наград без повторов из тех, что доступны игроку
     public static List<Reward> Generate(IReadOnlyList<Reward> pool, PlayerData player, int count)
     {
         var available = new List<Reward>();
@@ -12,7 +11,6 @@ public static class RewardGenerator
             if (reward != null && reward.IsAvailable(player))
                 available.Add(reward);
         }
-
         var result = new List<Reward>();
         while (result.Count < count && available.Count > 0)
         {

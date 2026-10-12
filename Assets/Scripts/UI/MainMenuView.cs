@@ -16,14 +16,13 @@ public class MainMenuView : MonoBehaviour
         howToPlayButton.onClick.AddListener(() => howToPlayPanel.SetActive(true));
         closeHowToPlayButton.onClick.AddListener(() => howToPlayPanel.SetActive(false));
         quitButton.onClick.AddListener(Quit);
-
         howToPlayPanel.SetActive(false);
     }
 
     private void Quit()
     {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;   // в редакторе останавливаем Play
+        UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif

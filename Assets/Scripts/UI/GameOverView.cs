@@ -21,8 +21,7 @@ public class GameOverView : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (gameManager != null)
-            gameManager.Changed -= Refresh;
+        if (gameManager != null) gameManager.Changed -= Refresh;
     }
 
     private void Refresh()
@@ -30,8 +29,7 @@ public class GameOverView : MonoBehaviour
         bool show = gameManager.State == GameState.GameOver && gameManager.Winner != null;
         panel.SetActive(show);
 
-        if (show)
-            winnerText.text = $"Победил {gameManager.Winner.Name}!";
+        if (show) winnerText.text = $"Победил {gameManager.Winner.Name}!";
     }
 
     private void Restart()

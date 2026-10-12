@@ -1,12 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private BattleManager battleManager;
-    [SerializeField] private List<HeroData> availableHeroes = new List<HeroData>();
+    [SerializeField] private List<HeroData> availableHeroes = new();
     [SerializeField] private int startingLives = 3;
-    [SerializeField] private List<Reward> rewardPool = new List<Reward>();
+    [SerializeField] private List<Reward> rewardPool = new();
     [SerializeField] private int rewardChoices = 3;
 
     public PlayerData Player1 { get; private set; }
@@ -15,45 +16,28 @@ public class GameManager : MonoBehaviour
     public int Round { get; private set; }
     public PlayerData Winner { get; private set; }
 
-    // для экрана выбора героя
     public IReadOnlyList<HeroData> StartingHeroes => availableHeroes;
     public PlayerData CurrentPickPlayer => currentPickPlayer;
 
-    // для экрана выбора награды
     public PlayerData CurrentRewardPlayer => currentRewardPlayer;
     public IReadOnlyList<Reward> CurrentOptions => currentOptions;
     public Reward PendingReward => pendingReward;
 
-    public event System.Action Changed;
+    public event Action Changed;
 
-    private readonly Queue<PlayerData> rewardQueue = new Queue<PlayerData>();
+    private readonly Queue<PlayerData> rewardQueue = new();
     private PlayerData loser;
     private PlayerData currentPickPlayer;
     private PlayerData currentRewardPlayer;
-    private List<Reward> currentOptions = new List<Reward>();
-    private Reward pendingReward;   // награда, для которой ждём выбор героя
+    private List<Reward> currentOptions = new();
+    private Reward pendingReward;
 
     private void Start()
     {
         Player1 = new PlayerData("Игрок 1", startingLives);
         Player2 = new PlayerData("Игрок 2", startingLives);
-
         battleManager.BattleEnded += OnBattleEnded;
         StartHeroSelect();
-    }
-
-    private void NotifyChanged()
-    {
-        Changed?.Invoke();
-    }
-
-    // ---------- Выбор стартового героя ----------
-
-    private void StartHeroSelect()
-    {
-        State = GameState.HeroSelect;
-        currentPickPlayer = Player1;
-        NotifyChanged();
     }
 
     public void PickStartHero(HeroData hero)
@@ -72,7 +56,45 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ---------- Бой ----------
+    public void ChooseReward(Reward reward)
+    {
+        if (!reward.NeedsHeroTarget)
+        {
+            reward.Apply(currentRewardPlayer, null);
+            NextRewardPlayer();
+            return;
+        }
+
+        var targets = GetValidTargets(reward);
+
+        if (targets.Count == 1)
+        {
+            reward.Apply(currentRewardPlayer, targets[0]);
+            NextRewardPlayer();
+        }
+        else if (targets.Count > 1)
+        {
+            pendingReward = reward;
+            NotifyChanged();
+        }
+    }
+
+    public void ChooseTarget(HeroRuntimeData hero)
+    {
+        pendingReward.Apply(currentRewardPlayer, hero);
+        NextRewardPlayer();
+    }
+
+    public List<HeroRuntimeData> GetValidTargets(Reward reward)
+    {
+        var result = new List<HeroRuntimeData>();
+        foreach (var hero in currentRewardPlayer.Team)
+        {
+            if (reward.CanTarget(hero))
+                result.Add(hero);
+        }
+        return result;
+    }
 
     private void StartBattle()
     {
@@ -85,11 +107,9 @@ public class GameManager : MonoBehaviour
 
     private void OnBattleEnded(BattleResult result)
     {
-        // проигравший бой теряет жизнь, при ничьей никто
         loser = null;
         if (result == BattleResult.LeftWon) { Player2.LoseLife(); loser = Player2; }
         else if (result == BattleResult.RightWon) { Player1.LoseLife(); loser = Player1; }
-
         if (!Player1.IsAlive || !Player2.IsAlive)
         {
             State = GameState.GameOver;
@@ -98,11 +118,8 @@ public class GameManager : MonoBehaviour
             NotifyChanged();
             return;
         }
-
         StartRewardPhase();
     }
-
-    // ---------- Награды ----------
 
     private void StartRewardPhase()
     {
@@ -120,59 +137,23 @@ public class GameManager : MonoBehaviour
             StartBattle();
             return;
         }
-
         currentRewardPlayer = rewardQueue.Dequeue();
         pendingReward = null;
-
-        // проигравший бой получает на один вариант больше
         int count = rewardChoices + (currentRewardPlayer == loser ? 1 : 0);
         currentOptions = RewardGenerator.Generate(rewardPool, currentRewardPlayer, count);
         NotifyChanged();
-
-        if (currentOptions.Count == 0)
-            NextRewardPlayer();   // предлагать нечего, переходим к следующему
+        if (currentOptions.Count == 0) NextRewardPlayer();
     }
 
-    public void ChooseReward(Reward reward)
+    private void NotifyChanged()
     {
-        if (!reward.NeedsHeroTarget)
-        {
-            reward.Apply(currentRewardPlayer, null);
-            NextRewardPlayer();
-            return;
-        }
-
-        var targets = GetValidTargets(reward);
-
-        if (targets.Count == 1)
-        {
-            // подходит один герой, выбирать не из чего
-            reward.Apply(currentRewardPlayer, targets[0]);
-            NextRewardPlayer();
-        }
-        else if (targets.Count > 1)
-        {
-            pendingReward = reward;   // ждём, пока игрок выберет героя
-            NotifyChanged();
-        }
-        // если подходящих героев нет, награда не попала бы в предложения (см. IsAvailable)
+        Changed?.Invoke();
     }
 
-    public void ChooseTarget(HeroRuntimeData hero)
+    private void StartHeroSelect()
     {
-        pendingReward.Apply(currentRewardPlayer, hero);
-        NextRewardPlayer();
-    }
-
-    // герои текущего игрока, которым можно дать эту награду
-    public List<HeroRuntimeData> GetValidTargets(Reward reward)
-    {
-        var result = new List<HeroRuntimeData>();
-        foreach (var hero in currentRewardPlayer.Team)
-        {
-            if (reward.CanTarget(hero))
-                result.Add(hero);
-        }
-        return result;
+        State = GameState.HeroSelect;
+        currentPickPlayer = Player1;
+        NotifyChanged();
     }
 }

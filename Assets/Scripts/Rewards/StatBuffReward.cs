@@ -3,15 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "StatBuffReward", menuName = "Game/Rewards/Stat Buff")]
 public class StatBuffReward : Reward
 {
-    [Header("Проценты (можно отрицательные)")]
-    public float healthPercent;
-    public float damagePercent;
-
-    [Header("Плоские добавки")]
-    public float attackSpeedFlat;
-    public float armorFlat;
-    public float critChanceFlat;
-    public float critDamageFlat;
+    [SerializeField] private float healthPercent;
+    [SerializeField] private float damagePercent;
+    [SerializeField] private float attackSpeedFlat;
+    [SerializeField] private float armorFlat;
+    [SerializeField] private float critChanceFlat;
+    [SerializeField] private float critDamageFlat;
 
     public override void Apply(PlayerData player, HeroRuntimeData target)
     {

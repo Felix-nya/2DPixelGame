@@ -10,7 +10,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private float spacing = 1.5f;
     [SerializeField] private float battleTimeout = 60f;
 
-    private readonly List<Hero> heroes = new List<Hero>();
+    private readonly List<Hero> heroes = new();
     private bool battleActive;
     private float battleTimer;
 
@@ -62,8 +62,7 @@ public class BattleManager : MonoBehaviour
         if (!battleActive) return;
 
         battleTimer += Time.fixedDeltaTime;
-        if (battleTimer >= battleTimeout)
-            EndBattle(ResolveByHealth());
+        if (battleTimer >= battleTimeout) EndBattle(ResolveByHealth());
     }
 
     private void OnHeroDied(Hero dead)
@@ -81,7 +80,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    // по таймауту побеждает команда с большим процентом оставшегося здоровья
     private BattleResult ResolveByHealth()
     {
         float left = HealthRatio(Team.Left);
