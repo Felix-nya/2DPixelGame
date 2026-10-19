@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +9,9 @@ public class RewardView : MonoBehaviour
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform cardsContainer;
     [SerializeField] private CardView cardPrefab;
+    [SerializeField] private Sprite cardCommon;
+    [SerializeField] private Sprite cardRare;
+    [SerializeField] private Sprite cardLegendary;
 
     private void Start()
     {
@@ -33,7 +37,7 @@ public class RewardView : MonoBehaviour
             foreach (var reward in gameManager.CurrentOptions)
             {
                 Reward r = reward;
-                CreateCard(r.rewardName, r.description, r.icon, () => gameManager.ChooseReward(r));
+                CreateCard(r.rewardName, r.description, r.icon, r.rare, () => gameManager.ChooseReward(r));
             }
         }
         else
@@ -43,15 +47,29 @@ public class RewardView : MonoBehaviour
             {
                 HeroRuntimeData h = hero;
                 string info = $"Здоровье: {h.Stats.maxHealth:0}\nУрон: {h.Stats.damage:0}\nКрит: {h.Stats.critChance:0}% / {h.Stats.critDamage:0}%\nПредметы: {h.ItemsText}";
-                CreateCard(h.Data.heroName, info, HeroSprite(h), () => gameManager.ChooseTarget(h));
+                CreateCard(h.Data.heroName, info, HeroSprite(h), CardRares.Common, () => gameManager.ChooseTarget(h));
             }
         }
     }
 
-    private void CreateCard(string title, string description, Sprite icon, System.Action onClick)
+    private void CreateCard(string title, string description, Sprite icon, CardRares rare, System.Action onClick)
     {
         CardView card = Instantiate(cardPrefab, cardsContainer);
-        card.Setup(title, description, icon, onClick);
+        Sprite cardSprite;
+        switch (rare) {
+            case CardRares.Common:
+                cardSprite = cardCommon;
+                break;
+            case CardRares.Rare:
+                cardSprite = cardRare;
+                break;
+            case CardRares.Legendary:
+                cardSprite = cardLegendary;
+                break;
+            default:
+                throw new ArgumentException("Неизвестная редкость карты");
+        }
+        card.Setup(title, description, icon, cardSprite, onClick);
     }
 
     private void ClearCards()

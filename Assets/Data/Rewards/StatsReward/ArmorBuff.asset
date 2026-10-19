@@ -17,7 +17,10 @@ MonoBehaviour:
     \u0432\u044B\u0431\u0440\u0430\u043D\u043D\u043E\u043C\u0443 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443
     \u043D\u0430 4 \u0435\u0434\u0438\u043D\u0438\u0446"
   icon: {fileID: 0}
+  rare: 0
   healthPercent: 0
   damagePercent: 0
   attackSpeedFlat: 0
   armorFlat: 4
+  critChanceFlat: 0
+  critDamageFlat: 0

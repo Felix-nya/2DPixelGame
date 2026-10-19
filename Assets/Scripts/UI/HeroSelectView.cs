@@ -10,6 +10,7 @@ public class HeroSelectView : MonoBehaviour
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform cardsContainer;
     [SerializeField] private CardView cardPrefab;
+    [SerializeField] private Sprite cardSprite;
     [SerializeField, Min(1)] private int heroChoices = 3;
 
     private readonly List<HeroData> options = new();
@@ -69,6 +70,6 @@ public class HeroSelectView : MonoBehaviour
         Sprite sprite = isLeft ? hero.spriteLeftTeam : hero.spriteRightTeam;
         if (sprite == null) sprite = hero.spriteLeftTeam;
         CardView card = Instantiate(cardPrefab, cardsContainer);
-        card.Setup(hero.heroName, info, sprite, () => gameManager.PickStartHero(hero));
+        card.Setup(hero.heroName, info, sprite, cardSprite, () => gameManager.PickStartHero(hero));
     }
 }

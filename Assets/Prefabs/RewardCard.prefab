@@ -72,8 +72,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 7450344705356935573, guid: 9604d662700bce14a96398ae81f540c8, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Padding:
     m_Left: 20
     m_Right: 20
-    m_Top: 20
+    m_Top: 40
     m_Bottom: 20
   m_ChildAlignment: 1
   m_Spacing: 15
@@ -187,6 +187,7 @@ MonoBehaviour:
   titleText: {fileID: 7907395666513952308}
   descriptionText: {fileID: 1938664278263736462}
   iconImage: {fileID: 4466585062640558366}
+  cardImage: {fileID: 6311191589668926679}
   button: {fileID: 6398121530967224422}
 --- !u!1 &6085257593479667310
 GameObject:

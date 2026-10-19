@@ -330,6 +330,9 @@ MonoBehaviour:
   titleText: {fileID: 663059749}
   cardsContainer: {fileID: 778140344}
   cardPrefab: {fileID: 4374801888313977666, guid: 8cb6435156688d442b6965a9df5a5f2b, type: 3}
+  cardCommon: {fileID: 7450344705356935573, guid: 9604d662700bce14a96398ae81f540c8, type: 3}
+  cardRare: {fileID: -5337191169292414259, guid: 2eea02acf700d884883430004072e51d, type: 3}
+  cardLegendary: {fileID: 2376781600031886474, guid: 7e9442d268334394c8bffac6cc46714c, type: 3}
 --- !u!114 &129397975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,6 +350,8 @@ MonoBehaviour:
   titleText: {fileID: 227136527}
   cardsContainer: {fileID: 1846260608}
   cardPrefab: {fileID: 4374801888313977666, guid: 8cb6435156688d442b6965a9df5a5f2b, type: 3}
+  cardSprite: {fileID: 7450344705356935573, guid: 9604d662700bce14a96398ae81f540c8, type: 3}
+  heroChoices: 3
 --- !u!114 &129397976
 MonoBehaviour:
   m_ObjectHideFlags: 0
