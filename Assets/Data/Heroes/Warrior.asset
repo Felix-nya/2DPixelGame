@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  animatorLeftTeam: {fileID: 22100000, guid: 0b1547805147f384a82ee1c6495f51c6, type: 2}
+  animatorRightTeam: {fileID: 22100000, guid: d650cfecd5bce2c48a6cb3aa66b15d9b, type: 2}
+  attackHitDelay: 0.3
   heroName: "\u0412\u043E\u0438\u043D"
   role: 0
   spriteLeftTeam: {fileID: 1841735198376274379, guid: 6f7d70ab7f5298043a2885e25b75f66a, type: 3}

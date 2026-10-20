@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(HeroVisual))]
 public class Hero : MonoBehaviour
 {
     private const float RetargetInterval = 0.25f;
@@ -25,19 +26,37 @@ public class Hero : MonoBehaviour
     private IReadOnlyList<ItemData> items = new List<ItemData>();
     private Stats baseStats;
     private BattleManager battle;
+    private HeroVisual visual;
     private ITargetingStrategy targeting;
     private Hero target;
     private float attackTimer;
     private float abilityTimer;
     private float retargetTimer;
+    private bool swinging;
+    private float swingTimer;
+    private Hero swingTarget;
+
+    private void Awake()
+    {
+        visual = GetComponent<HeroVisual>();
+    }
 
     private void FixedUpdate()
     {
-        if (battle == null || !IsAlive || !battle.IsActive) return;
+        if (battle == null || !IsAlive) return;
+        if (!battle.IsActive)
+        {
+            visual.SetMoving(false);
+            return;
+        }
         float dt = Time.fixedDeltaTime;
         TickModifiers(dt);
         UpdateTarget(dt);
-        if (target == null) return;
+        if (target == null)
+        {
+            visual.SetMoving(false);
+            return;
+        }
         UpdateAbility(dt);
         MoveOrAttack(dt);
     }
@@ -55,10 +74,11 @@ public class Hero : MonoBehaviour
         targeting = TargetingFactory.Create(data.targetingType);
         CurrentHealth = Stats.maxHealth;
         abilityTimer = data.ability != null ? data.ability.cooldown : 0f;
-        var sr = GetComponent<SpriteRenderer>();
+        swinging = false;
+        swingTarget = null;
         Sprite teamSprite = team == Team.Left ? data.spriteLeftTeam : data.spriteRightTeam;
-        if (teamSprite != null) sr.sprite = teamSprite;
-        sr.color = data.tint;
+        RuntimeAnimatorController controller = data.GetAnimator(team, out bool mirrored);
+        visual.Setup(controller, teamSprite, data.tint, mirrored);
         healthBar.SetColor(team == Team.Left ? Color.green : Color.red);
         UpdateHealthBar();
     }
@@ -90,9 +110,11 @@ public class Hero : MonoBehaviour
         if (CurrentHealth <= 0f)
         {
             Died?.Invoke(this);
-            gameObject.SetActive(false);
+            visual.PlayDeath();
+            if (healthBar != null) healthBar.gameObject.SetActive(false);
             return;
         }
+        visual.PlayHurt();
         if (attacker == null) return;
         foreach (var item in items)
         {
@@ -168,18 +190,42 @@ public class Hero : MonoBehaviour
 
     private void MoveOrAttack(float dt)
     {
+        if (swinging)
+        {
+            TickSwing(dt);
+            return;
+        }
         float distance = Vector2.Distance(transform.position, target.transform.position);
         if (distance > Stats.range)
         {
+            visual.SetMoving(true);
             transform.position = Vector2.MoveTowards(transform.position, target.transform.position, Stats.moveSpeed * dt);
             return;
         }
+        visual.SetMoving(false);
         attackTimer -= dt;
-        if (attackTimer <= 0f)
-        {
-            DealDamage(target, Stats.damage, DamageSource.Attack);
-            attackTimer += 1f / Stats.attackSpeed;
-        }
+        if (attackTimer <= 0f) StartSwing();
+    }
+
+    private void StartSwing()
+    {
+        float reference = Mathf.Max(0.01f, Data.ReferenceAttackSpeed);
+        float animSpeed = Mathf.Max(1f, Stats.attackSpeed / reference);
+        swinging = true;
+        swingTarget = target;
+        swingTimer = Data.AttackHitDelay / animSpeed;
+        attackTimer += 1f / Stats.attackSpeed;
+        visual.PlayAttack(animSpeed);
+    }
+
+    private void TickSwing(float dt)
+    {
+        attackTimer -= dt;
+        swingTimer -= dt;
+        if (swingTimer > 0f) return;
+        swinging = false;
+        if (swingTarget != null && swingTarget.IsAlive) DealDamage(swingTarget, Stats.damage, DamageSource.Attack);
+        swingTarget = null;
     }
 
     private void UpdateHealthBar()
