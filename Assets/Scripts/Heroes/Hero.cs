@@ -77,15 +77,15 @@ public class Hero : MonoBehaviour
         swinging = false;
         swingTarget = null;
         Sprite teamSprite = team == Team.Left ? data.spriteLeftTeam : data.spriteRightTeam;
-        RuntimeAnimatorController controller = data.GetAnimator(team, out bool mirrored);
-        visual.Setup(controller, teamSprite, data.tint, mirrored);
+        RuntimeAnimatorController controller = data.GetAnimator(team);
+        visual.Setup(controller, teamSprite, data.tint, data.NativeFacing);
+        visual.FaceDirection(team == Team.Left ? 1f : -1f);
         healthBar.SetColor(team == Team.Left ? Color.green : Color.red);
         UpdateHealthBar();
     }
 
-    public void DealDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)
+    public DamagePacket PrepareDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)
     {
-        if (!IsAlive || !victim.IsAlive) return;
         float damage = baseDamage;
         foreach (var item in items)
         {
@@ -93,12 +93,24 @@ public class Hero : MonoBehaviour
         }
         bool isCrit = false;
         if (canCrit) damage = DamageCalculator.RollCrit(damage, Stats.critChance, Stats.critDamage, out isCrit);
-        float dealt = DamageCalculator.Calculate(damage, victim.Armor);
-        victim.TakeDamage(dealt, this, source, isCrit);
+        return new DamagePacket(damage, isCrit, source);
+    }
+
+    public void ApplyDamage(Hero victim, DamagePacket packet)
+    {
+        if (victim == null || !victim.IsAlive) return;
+        float dealt = DamageCalculator.Calculate(packet.Amount, victim.Armor);
+        victim.TakeDamage(dealt, this, packet.Source, packet.IsCrit);
         foreach (var item in items)
         {
-            if (item.AppliesTo(source)) item.OnDamageDealt(this, victim, dealt, source);
+            if (item.AppliesTo(packet.Source)) item.OnDamageDealt(this, victim, dealt, packet.Source);
         }
+    }
+
+    public void DealDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)
+    {
+        if (!IsAlive || !victim.IsAlive) return;
+        ApplyDamage(victim, PrepareDamage(victim, baseDamage, source, canCrit));
     }
 
     public void TakeDamage(float amount, Hero attacker = null, DamageSource source = DamageSource.Attack, bool isCrit = false)
@@ -195,6 +207,7 @@ public class Hero : MonoBehaviour
             TickSwing(dt);
             return;
         }
+        visual.FaceDirection(target.transform.position.x - transform.position.x);
         float distance = Vector2.Distance(transform.position, target.transform.position);
         if (distance > Stats.range)
         {
@@ -223,9 +236,27 @@ public class Hero : MonoBehaviour
         attackTimer -= dt;
         swingTimer -= dt;
         if (swingTimer > 0f) return;
+
         swinging = false;
-        if (swingTarget != null && swingTarget.IsAlive) DealDamage(swingTarget, Stats.damage, DamageSource.Attack);
+        Hero victim = swingTarget;
         swingTarget = null;
+        if (victim == null || !victim.IsAlive) return;
+
+        if (Data.ProjectilePrefab != null)
+            FireProjectile(victim);
+        else
+            DealDamage(victim, Stats.damage, DamageSource.Attack);
+    }
+
+    private void FireProjectile(Hero victim)
+    {
+        DamagePacket packet = PrepareDamage(victim, Stats.damage, DamageSource.Attack);
+
+        Vector2 offset = Data.ProjectileSpawnOffset;
+        Vector3 spawn = transform.position + new Vector3(offset.x * visual.Facing, offset.y, 0f);
+
+        Projectile projectile = Instantiate(Data.ProjectilePrefab, spawn, Quaternion.identity);
+        projectile.Launch(this, victim, packet, battle);
     }
 
     private void UpdateHealthBar()

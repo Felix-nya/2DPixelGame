@@ -12,10 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  animatorLeftTeam: {fileID: 0}
+  animatorRightTeam: {fileID: 0}
+  attackHitDelay: 0.25
   heroName: "\u041B\u0443\u0447\u043D\u0438\u043A"
   role: 1
   spriteLeftTeam: {fileID: -4461255035556427556, guid: eb30490929cb6fc4a9a5da48fb2af8ec, type: 3}
   spriteRightTeam: {fileID: -2212845834067422425, guid: fd4c2840b6ef5d346b5213b723e7787d, type: 3}
+  spritesFaceRight: 0
+  projectilePrefab: {fileID: 9003684917429815014, guid: 314ca90ea93ec9946838abfbed93c745, type: 3}
+  projectileSpawnOffset: {x: 0.4, y: 0.1}
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 100

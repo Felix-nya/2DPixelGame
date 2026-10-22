@@ -16,18 +16,25 @@ public class HeroData : ScriptableObject
     [FormerlySerializedAs("sprite")]
     public Sprite spriteLeftTeam;
     public Sprite spriteRightTeam;
+    [SerializeField] private bool spritesFaceRight;
+    public int NativeFacing => spritesFaceRight ? 1 : -1;
+
+    [Header("Снаряд (для дальнего боя)")]
+    [SerializeField] private Projectile projectilePrefab;
+
+    [Tooltip("Где появляется снаряд относительно героя, когда он смотрит вправо")]
+    [SerializeField] private Vector2 projectileSpawnOffset = new Vector2(0.4f, 0.1f);
+
+    public Projectile ProjectilePrefab => projectilePrefab;
+    public Vector2 ProjectileSpawnOffset => projectileSpawnOffset;
 
     public Color tint = Color.white;
     public Stats baseStats;
     public TargetingType targetingType;
     public Ability ability;
-    public RuntimeAnimatorController GetAnimator(Team team, out bool mirrored)
+    public RuntimeAnimatorController GetAnimator(Team team)
     {
-        mirrored = false;
         if (team == Team.Left) return animatorLeftTeam;
-        if (animatorRightTeam != null) return animatorRightTeam;
-
-        mirrored = animatorLeftTeam != null;
-        return animatorLeftTeam;
+        return animatorRightTeam != null ? animatorRightTeam : animatorLeftTeam;
     }
 }

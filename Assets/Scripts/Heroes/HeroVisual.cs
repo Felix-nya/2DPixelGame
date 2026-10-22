@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class HeroVisual : MonoBehaviour
 {
+    private const float FaceDeadZone = 0.05f;
+
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private static readonly int AttackHash = Animator.StringToHash("Attack");
     private static readonly int DieHash = Animator.StringToHash("Die");
@@ -17,6 +19,9 @@ public class HeroVisual : MonoBehaviour
     private Color baseColor = Color.white;
     private float hurtTimer;
     private bool isMoving;
+    private int nativeFacing = 1;
+    private int facing = 1;
+    public int Facing => facing;
 
     private void Awake()
     {
@@ -24,7 +29,7 @@ public class HeroVisual : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Setup(RuntimeAnimatorController controller, Sprite staticSprite, Color tint, bool mirrored)
+    public void Setup(RuntimeAnimatorController controller, Sprite staticSprite, Color tint, int nativeFacing)
     {
         bool animated = controller != null;
 
@@ -34,11 +39,25 @@ public class HeroVisual : MonoBehaviour
         if (!animated && staticSprite != null)
             spriteRenderer.sprite = staticSprite;
 
-        spriteRenderer.flipX = mirrored;
+        this.nativeFacing = nativeFacing;
+        facing = nativeFacing;
+        spriteRenderer.flipX = false;
+
         baseColor = tint;
         spriteRenderer.color = tint;
         hurtTimer = 0f;
         isMoving = false;
+    }
+
+    public void FaceDirection(float dx)
+    {
+        if (Mathf.Abs(dx) < FaceDeadZone) return;
+
+        int desired = dx > 0f ? 1 : -1;
+        if (desired == facing) return;
+
+        facing = desired;
+        spriteRenderer.flipX = facing != nativeFacing;
     }
 
     public void SetMoving(bool moving)
