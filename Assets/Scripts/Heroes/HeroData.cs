@@ -7,6 +7,9 @@ public class HeroData : ScriptableObject
     [SerializeField] private RuntimeAnimatorController animatorLeftTeam;
     [SerializeField] private RuntimeAnimatorController animatorRightTeam;
     [SerializeField] private float attackHitDelay = 0.25f;
+    [Tooltip("Полная длина анимации удара в секундах при обычной скорости")]
+    [SerializeField] private float attackClipLength = 0.6f;
+    public float AttackClipLength => Mathf.Max(attackClipLength, attackHitDelay);
     public float AttackHitDelay => attackHitDelay;
     public float ReferenceAttackSpeed => baseStats.attackSpeed;
     public string heroName;

@@ -15,13 +15,14 @@ MonoBehaviour:
   animatorLeftTeam: {fileID: 22100000, guid: 59f0052fa415b6c48aaa88c53152f9c7, type: 2}
   animatorRightTeam: {fileID: 0}
   attackHitDelay: 1.285
+  attackClipLength: 1.34
   heroName: "\u041B\u0443\u0447\u043D\u0438\u043A"
   role: 1
   spriteLeftTeam: {fileID: -4461255035556427556, guid: eb30490929cb6fc4a9a5da48fb2af8ec, type: 3}
   spriteRightTeam: {fileID: -2212845834067422425, guid: fd4c2840b6ef5d346b5213b723e7787d, type: 3}
   spritesFaceRight: 0
   projectilePrefab: {fileID: 9003684917429815014, guid: 314ca90ea93ec9946838abfbed93c745, type: 3}
-  projectileSpawnOffset: {x: 0.45, y: 0.2}
+  projectileSpawnOffset: {x: 0.5, y: 0.3}
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 100

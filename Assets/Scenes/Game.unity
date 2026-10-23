@@ -2739,6 +2739,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ca5d9e9e25d366b45b090a0e92f0f801, type: 2}
   - {fileID: 11400000, guid: 02a94b9350c3bc24993a297aaa708a1e, type: 2}
   rewardChoices: 3
+  rarityWeights:
+    common: 70
+    rare: 27
+    legendary: 3
 --- !u!4 &1733734052
 Transform:
   m_ObjectHideFlags: 0

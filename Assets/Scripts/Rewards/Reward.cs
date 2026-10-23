@@ -2,9 +2,9 @@ using UnityEngine;
 
 public enum CardRares
 {
-    Common, // Обычная 60%
-    Rare, // Редкая 30%
-    Legendary // Легендарная 10%
+    Common,
+    Rare,
+    Legendary
 }
 public abstract class Reward : ScriptableObject
 {

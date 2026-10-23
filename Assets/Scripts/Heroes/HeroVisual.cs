@@ -10,6 +10,7 @@ public class HeroVisual : MonoBehaviour
     private static readonly int AttackHash = Animator.StringToHash("Attack");
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int AttackSpeedHash = Animator.StringToHash("AttackSpeed");
+    private static readonly int DeathStateHash = Animator.StringToHash("Death");
 
     [SerializeField] private Color hurtColor = new Color(1f, 0.35f, 0.35f);
     [SerializeField] private float hurtDuration = 0.15f;
@@ -19,6 +20,7 @@ public class HeroVisual : MonoBehaviour
     private Color baseColor = Color.white;
     private float hurtTimer;
     private bool isMoving;
+    private bool isDead;
     private int nativeFacing = 1;
     private int facing = 1;
     public int Facing => facing;
@@ -47,11 +49,12 @@ public class HeroVisual : MonoBehaviour
         spriteRenderer.color = tint;
         hurtTimer = 0f;
         isMoving = false;
+        isDead = false;
     }
 
     public void FaceDirection(float dx)
     {
-        if (Mathf.Abs(dx) < FaceDeadZone) return;
+        if (isDead || Mathf.Abs(dx) < FaceDeadZone) return;
 
         int desired = dx > 0f ? 1 : -1;
         if (desired == facing) return;
@@ -62,7 +65,7 @@ public class HeroVisual : MonoBehaviour
 
     public void SetMoving(bool moving)
     {
-        if (isMoving == moving) return;
+        if (isDead || isMoving == moving) return;
         isMoving = moving;
 
         if (animator.enabled)
@@ -71,7 +74,7 @@ public class HeroVisual : MonoBehaviour
 
     public void PlayAttack(float speedMultiplier)
     {
-        if (!animator.enabled) return;
+        if (isDead || !animator.enabled) return;
 
         animator.SetFloat(AttackSpeedHash, speedMultiplier);
         animator.SetTrigger(AttackHash);
@@ -79,12 +82,20 @@ public class HeroVisual : MonoBehaviour
 
     public void PlayDeath()
     {
-        if (animator.enabled)
-            animator.SetTrigger(DieHash);
+        if (isDead) return;
+        isDead = true;
+
+        if (!animator.enabled) return;
+
+        animator.ResetTrigger(AttackHash);
+        animator.ResetTrigger(DieHash);
+        animator.SetBool(IsMovingHash, false);
+        animator.Play(DeathStateHash, 0, 0f);
     }
 
     public void PlayHurt()
     {
+        if (isDead) return;
         hurtTimer = hurtDuration;
     }
 

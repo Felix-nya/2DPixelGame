@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int startingLives = 3;
     [SerializeField] private List<Reward> rewardPool = new();
     [SerializeField] private int rewardChoices = 3;
+    [SerializeField] private RarityWeights rarityWeights = new();
 
     public PlayerData Player1 { get; private set; }
     public PlayerData Player2 { get; private set; }
@@ -140,7 +141,7 @@ public class GameManager : MonoBehaviour
         currentRewardPlayer = rewardQueue.Dequeue();
         pendingReward = null;
         int count = rewardChoices + (currentRewardPlayer == loser ? 1 : 0);
-        currentOptions = RewardGenerator.Generate(rewardPool, currentRewardPlayer, count);
+        currentOptions = RewardGenerator.Generate(rewardPool, currentRewardPlayer, count, rarityWeights);
         NotifyChanged();
         if (currentOptions.Count == 0) NextRewardPlayer();
     }

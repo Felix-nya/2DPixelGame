@@ -7,6 +7,7 @@ using UnityEngine;
 public class Hero : MonoBehaviour
 {
     private const float RetargetInterval = 0.25f;
+    private const float ReachTolerance = 1.25f;
     private static readonly StatType[] AllStatTypes = (StatType[])Enum.GetValues(typeof(StatType));
 
     [SerializeField] private HealthBar healthBar;
@@ -32,8 +33,12 @@ public class Hero : MonoBehaviour
     private float attackTimer;
     private float abilityTimer;
     private float retargetTimer;
+
     private bool swinging;
-    private float swingTimer;
+    private bool hitDone;
+    private float swingElapsed;
+    private float hitTime;
+    private float swingDuration;
     private Hero swingTarget;
 
     private void Awake()
@@ -75,6 +80,7 @@ public class Hero : MonoBehaviour
         CurrentHealth = Stats.maxHealth;
         abilityTimer = data.ability != null ? data.ability.cooldown : 0f;
         swinging = false;
+        hitDone = false;
         swingTarget = null;
         Sprite teamSprite = team == Team.Left ? data.spriteLeftTeam : data.spriteRightTeam;
         RuntimeAnimatorController controller = data.GetAnimator(team);
@@ -223,29 +229,62 @@ public class Hero : MonoBehaviour
     private void StartSwing()
     {
         float reference = Mathf.Max(0.01f, Data.ReferenceAttackSpeed);
-        float animSpeed = Mathf.Max(1f, Stats.attackSpeed / reference);
+        float animSpeed = Mathf.Max(1f, Stats.attackSpeed / reference, Data.AttackClipLength * Stats.attackSpeed);
+
         swinging = true;
+        hitDone = false;
+        swingElapsed = 0f;
         swingTarget = target;
-        swingTimer = Data.AttackHitDelay / animSpeed;
+        hitTime = Data.AttackHitDelay / animSpeed;
+        swingDuration = Data.AttackClipLength / animSpeed;
         attackTimer += 1f / Stats.attackSpeed;
+
         visual.PlayAttack(animSpeed);
     }
 
     private void TickSwing(float dt)
     {
         attackTimer -= dt;
-        swingTimer -= dt;
-        if (swingTimer > 0f) return;
+        swingElapsed += dt;
 
-        swinging = false;
-        Hero victim = swingTarget;
-        swingTarget = null;
-        if (victim == null || !victim.IsAlive) return;
+        if (!hitDone && swingElapsed >= hitTime)
+        {
+            hitDone = true;
+            ReleaseAttack();
+        }
+
+        if (swingElapsed >= swingDuration)
+        {
+            swinging = false;
+            swingTarget = null;
+        }
+    }
+
+    private void ReleaseAttack()
+    {
+        Hero victim = ResolveVictim();
+        if (victim == null) return;
+
+        if (victim != swingTarget)
+            visual.FaceDirection(victim.transform.position.x - transform.position.x);
 
         if (Data.ProjectilePrefab != null)
             FireProjectile(victim);
         else
             DealDamage(victim, Stats.damage, DamageSource.Attack);
+    }
+
+    private Hero ResolveVictim()
+    {
+        if (swingTarget != null && swingTarget.IsAlive) return swingTarget;
+        if (target != null && target.IsAlive && IsInReach(target)) return target;
+        return null;
+    }
+
+    private bool IsInReach(Hero other)
+    {
+        float distance = Vector2.Distance(transform.position, other.transform.position);
+        return distance <= Stats.range * ReachTolerance;
     }
 
     private void FireProjectile(Hero victim)
