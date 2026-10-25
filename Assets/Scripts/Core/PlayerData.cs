@@ -2,7 +2,10 @@ using System.Collections.Generic;
 
 public class PlayerData
 {
-    public const int MaxTeamSize = 4;
+    /// <summary>
+    /// Количество юнитов у одного игрока, на данный момент ограничение не действует, но в будущем может использоваться.
+    /// </summary>
+    public const int MaxTeamSize = 100;
 
     public string Name { get; }
     public int Lives { get; private set; }

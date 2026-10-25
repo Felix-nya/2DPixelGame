@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3bc8d726e59814380b57b430207cc3, type: 3}
   m_Name: Mage
   m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  animatorLeftTeam: {fileID: 22100000, guid: 11b0075f52bbdd24391bdfdddb56a076, type: 2}
+  animatorRightTeam: {fileID: 0}
+  attackHitDelay: 0.5
+  attackClipLength: 0.83
   heroName: "\u041C\u0430\u0433"
   role: 2
   spriteLeftTeam: {fileID: 447248055226465854, guid: 7bcea8670d80ce446a443db1edce303d, type: 3}
   spriteRightTeam: {fileID: 4695546510137771435, guid: e12a0e54221a4314b939108e16663a08, type: 3}
+  spritesFaceRight: 0
+  projectilePrefab: {fileID: 2835568918515206781, guid: 5195f2f872473f440ae4212b93c3fa5e, type: 3}
+  projectileSpawnOffset: {x: 0.4, y: 0.1}
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 80

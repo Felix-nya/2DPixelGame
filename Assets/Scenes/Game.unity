@@ -548,7 +548,7 @@ Transform:
   m_GameObject: {fileID: 143635277}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5, y: 0, z: 0}
+  m_LocalPosition: {x: -13, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -903,7 +903,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 11, z: 1}
+  m_LocalScale: {x: 20, y: 20, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2111308437}
@@ -1010,7 +1010,7 @@ Transform:
   m_GameObject: {fileID: 441239315}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 0}
+  m_LocalPosition: {x: 13, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1618,7 +1618,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2722,13 +2722,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7feeb1a1d1421d440bdee06bb617358a, type: 2}
   - {fileID: 11400000, guid: a39e87428951c5e4581dd19f36bcb6b3, type: 2}
   - {fileID: 11400000, guid: d3ab6cebfc7421b46bae4f94e779d4ae, type: 2}
-  startingLives: 5
+  startingLives: 10
   rewardPool:
   - {fileID: 11400000, guid: 3c65af4bfc54c6842968c5b012bafdce, type: 2}
   - {fileID: 11400000, guid: bae3bcb448f3a4c428f773b0b5e9ce47, type: 2}
   - {fileID: 11400000, guid: ceceaa00f6ed735449725dd31595f8b6, type: 2}
   - {fileID: 11400000, guid: eace21e7b2ee3644db31bed730571f14, type: 2}
-  - {fileID: 11400000, guid: cd1b63727ee3a30428b543be73075604, type: 2}
   - {fileID: 11400000, guid: 6090bc4d43b15054697f43077b6065e5, type: 2}
   - {fileID: 11400000, guid: 8cfba78b0a6e80f43bdb2f97a8f276b4, type: 2}
   - {fileID: 11400000, guid: c3c091089baffe74bab2d09cddb2af37, type: 2}
@@ -2738,6 +2737,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d1f565ed496f17045aea235591a34349, type: 2}
   - {fileID: 11400000, guid: ca5d9e9e25d366b45b090a0e92f0f801, type: 2}
   - {fileID: 11400000, guid: 02a94b9350c3bc24993a297aaa708a1e, type: 2}
+  - {fileID: 11400000, guid: 85c63fefbca903d479f03e5cdccc123b, type: 2}
+  - {fileID: 11400000, guid: dcbea0dba7664574bb9b3ca2ed160147, type: 2}
+  - {fileID: 11400000, guid: 4362031ce0814f0448c83051e6130643, type: 2}
   rewardChoices: 3
   rarityWeights:
     common: 70

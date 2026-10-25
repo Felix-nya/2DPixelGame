@@ -26,11 +26,11 @@ MonoBehaviour:
   tint: {r: 1, g: 1, b: 1, a: 1}
   baseStats:
     maxHealth: 160
-    damage: 10
-    attackSpeed: 1
+    damage: 13
+    attackSpeed: 1.15
     range: 1.2
     moveSpeed: 2.5
-    armor: 6
+    armor: 3
     critChance: 10
     critDamage: 150
   targetingType: 0
