@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class HeroRuntimeData
 {
     public HeroData Data { get; }
     public Stats Stats { get; set; }
     public List<ItemData> Items { get; } = new();
+    public Vector2 Position { get; set; }
+    public bool IsPlaced { get; set; }
     public string ItemsText
     {
         get

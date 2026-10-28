@@ -10,12 +10,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<Reward> rewardPool = new();
     [SerializeField] private int rewardChoices = 3;
     [SerializeField] private RarityWeights rarityWeights = new();
+    [SerializeField] private PlacementManager placement;
 
     public PlayerData Player1 { get; private set; }
     public PlayerData Player2 { get; private set; }
     public GameState State { get; private set; }
     public int Round { get; private set; }
     public PlayerData Winner { get; private set; }
+    public PlayerData CurrentPlacementPlayer => currentPlacementPlayer;
+
+    public Team GetTeam(PlayerData player) => player == Player1 ? Team.Left : Team.Right;
+
+    private PlayerData currentPlacementPlayer;
 
     public IReadOnlyList<HeroData> StartingHeroes => availableHeroes;
     public PlayerData CurrentPickPlayer => currentPickPlayer;
@@ -53,7 +59,7 @@ public class GameManager : MonoBehaviour
         else
         {
             currentPickPlayer = null;
-            StartBattle();
+            StartPlacementPhase();
         }
     }
 
@@ -97,12 +103,39 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
+    public void ConfirmPlacement()
+    {
+        if (State != GameState.Placement) return;
+
+        if (currentPlacementPlayer == Player1)
+        {
+            currentPlacementPlayer = Player2;
+            NotifyChanged();
+        }
+        else
+        {
+            currentPlacementPlayer = null;
+            StartBattle();
+        }
+    }
+
+    private void StartPlacementPhase()
+    {
+        State = GameState.Placement;
+        currentRewardPlayer = null;
+        placement.AutoPlace(Player1, Team.Left);
+        placement.AutoPlace(Player2, Team.Right);
+        battleManager.SpawnTeams(Player1.Team, Player2.Team);
+
+        currentPlacementPlayer = Player1;
+        NotifyChanged();
+    }
+
     private void StartBattle()
     {
         Round++;
         State = GameState.Battle;
-        currentRewardPlayer = null;
-        battleManager.StartBattle(Player1.Team, Player2.Team);
+        battleManager.BeginBattle();
         NotifyChanged();
     }
 
@@ -135,7 +168,7 @@ public class GameManager : MonoBehaviour
     {
         if (rewardQueue.Count == 0)
         {
-            StartBattle();
+            StartPlacementPhase();
             return;
         }
         currentRewardPlayer = rewardQueue.Dequeue();

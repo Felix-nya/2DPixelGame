@@ -5,12 +5,9 @@ using UnityEngine;
 public class BattleManager : MonoBehaviour
 {
     [SerializeField] private Hero heroPrefab;
-    [SerializeField] private Transform leftSpawn;
-    [SerializeField] private Transform rightSpawn;
-    [SerializeField] private float spacing = 1.5f;
     [SerializeField] private float battleTimeout = 60f;
 
-    private readonly List<Hero> heroes = new();
+    private readonly List<Hero> heroes = new List<Hero>();
     private bool battleActive;
     private float battleTimer;
 
@@ -21,12 +18,17 @@ public class BattleManager : MonoBehaviour
     public event Action<BattleResult> BattleEnded;
     public event Action<Hero, float, bool> HeroDamaged;
     public event Action<Hero, float> HeroHealed;
+    public event Action<Hero> HeroSpawned;
 
-    public void StartBattle(List<HeroRuntimeData> leftTeam, List<HeroRuntimeData> rightTeam)
+    public void SpawnTeams(List<HeroRuntimeData> leftTeam, List<HeroRuntimeData> rightTeam)
     {
         ClearBattle();
-        SpawnTeam(leftTeam, Team.Left, leftSpawn);
-        SpawnTeam(rightTeam, Team.Right, rightSpawn);
+        SpawnTeam(leftTeam, Team.Left);
+        SpawnTeam(rightTeam, Team.Right);
+    }
+
+    public void BeginBattle()
+    {
         battleTimer = 0f;
         battleActive = true;
     }
@@ -41,19 +43,21 @@ public class BattleManager : MonoBehaviour
         battleActive = false;
     }
 
-    private void SpawnTeam(List<HeroRuntimeData> team, Team side, Transform spawn)
+    private void SpawnTeam(List<HeroRuntimeData> team, Team side)
     {
-        for (int i = 0; i < team.Count; i++)
+        foreach (var runtime in team)
         {
-            float offsetY = (i - (team.Count - 1) / 2f) * spacing;
-            Vector3 position = spawn.position + Vector3.up * offsetY;
+            if (!runtime.IsPlaced)
+                Debug.LogWarning($"Герой {runtime.Data.heroName} не размещён, он появится в точке (0, 0)");
 
+            var position = new Vector3(runtime.Position.x, runtime.Position.y, 0f);
             Hero hero = Instantiate(heroPrefab, position, Quaternion.identity);
-            hero.Setup(team[i], side, this);
+            hero.Setup(runtime, side, this);
             hero.Died += OnHeroDied;
             hero.DamageTaken += (h, amount, crit) => HeroDamaged?.Invoke(h, amount, crit);
             hero.Healed += (h, amount) => HeroHealed?.Invoke(h, amount);
             heroes.Add(hero);
+            HeroSpawned?.Invoke(hero);
         }
     }
 
@@ -62,7 +66,8 @@ public class BattleManager : MonoBehaviour
         if (!battleActive) return;
 
         battleTimer += Time.fixedDeltaTime;
-        if (battleTimer >= battleTimeout) EndBattle(ResolveByHealth());
+        if (battleTimer >= battleTimeout)
+            EndBattle(ResolveByHealth());
     }
 
     private void OnHeroDied(Hero dead)

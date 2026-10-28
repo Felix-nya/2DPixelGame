@@ -11,7 +11,9 @@ public class Hero : MonoBehaviour
     private static readonly StatType[] AllStatTypes = (StatType[])Enum.GetValues(typeof(StatType));
 
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private ForbiddenMarker marker;
 
+    public HeroRuntimeData Runtime { get; private set; }
     public Team Team { get; private set; }
     public HeroData Data { get; private set; }
     public Stats Stats { get; private set; }
@@ -69,6 +71,8 @@ public class Hero : MonoBehaviour
     public void Setup(HeroRuntimeData runtime, Team team, BattleManager battle)
     {
         HeroData data = runtime.Data;
+        Runtime = runtime;
+        HideForbiddenZone();
         Data = data;
         Team = team;
         baseStats = runtime.Stats;
@@ -88,6 +92,16 @@ public class Hero : MonoBehaviour
         visual.FaceDirection(team == Team.Left ? 1f : -1f);
         healthBar.SetColor(team == Team.Left ? Color.green : Color.red);
         UpdateHealthBar();
+    }
+
+    public void ShowForbiddenZone(float radius)
+    {
+        if (marker != null) marker.Show(radius);
+    }
+
+    public void HideForbiddenZone()
+    {
+        if (marker != null) marker.Hide();
     }
 
     public DamagePacket PrepareDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)

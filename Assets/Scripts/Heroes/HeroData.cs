@@ -14,6 +14,9 @@ public class HeroData : ScriptableObject
     public float ReferenceAttackSpeed => baseStats.attackSpeed;
     public string heroName;
     public HeroRole role;
+    [SerializeField, Min(0.1f)] private float placementRadius = 0.6f;
+
+    public float PlacementRadius => placementRadius;
 
     [Header("Спрайты по командам")]
     [FormerlySerializedAs("sprite")]
