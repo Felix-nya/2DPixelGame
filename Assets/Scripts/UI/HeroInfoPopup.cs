@@ -54,6 +54,11 @@ public class HeroInfoPopup : MonoBehaviour
         onGive = null;
         window.gameObject.SetActive(false);
     }
+    public void ClosePopup()
+    {
+        onGive = null;
+        window.gameObject.SetActive(false);
+    }
 
     private void Reposition(Hero hero)
     {

@@ -40,7 +40,7 @@ public class RewardTargetController : MonoBehaviour
     }
     private void Refresh()
     {
-        popup.Hide();
+        popup.ClosePopup();
         foreach (var hero in battleManager.Heroes)
             ApplyVisuals(hero);
     }
