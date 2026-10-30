@@ -9,6 +9,13 @@ public class PlacementManager : MonoBehaviour
 
     public PlacementZone GetZone(Team team) => team == Team.Left ? leftZone : rightZone;
 
+    public Bounds GetAllowedBounds(Team team)
+    {
+        Bounds b = GetZone(team).Bounds;
+        b.Expand(new Vector3(-edgeMargin * 2f, -edgeMargin * 2f, 0f));
+        return b;
+    }
+
     public bool IsValidPosition(Team team, PlayerData player, HeroRuntimeData hero, Vector2 position)
     {
         if (!GetZone(team).Contains(position, edgeMargin)) return false;
@@ -18,7 +25,8 @@ public class PlacementManager : MonoBehaviour
             if (other == hero || !other.IsPlaced) continue;
 
             float minDistance = hero.Data.PlacementRadius + other.Data.PlacementRadius;
-            if (Vector2.Distance(position, other.Position) < minDistance) return false;
+            Vector2 delta = position - other.Position;
+            if (Mathf.Abs(delta.x) < minDistance && Mathf.Abs(delta.y) < minDistance) return false;
         }
         return true;
     }

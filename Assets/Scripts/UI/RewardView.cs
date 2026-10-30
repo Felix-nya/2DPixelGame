@@ -1,9 +1,14 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RewardView : MonoBehaviour
 {
+    [Header("Выбор героя на арене")]
+    [SerializeField] private GameObject targetPanel;
+    [SerializeField] private TMP_Text targetText;
+    [SerializeField] private Button cancelButton;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text titleText;
@@ -15,6 +20,7 @@ public class RewardView : MonoBehaviour
 
     private void Start()
     {
+        cancelButton.onClick.AddListener(gameManager.CancelPendingReward);
         gameManager.Changed += Refresh;
         Refresh();
     }
@@ -27,9 +33,20 @@ public class RewardView : MonoBehaviour
 
     private void Refresh()
     {
-        bool show = gameManager.State == GameState.Reward && gameManager.CurrentRewardPlayer != null;
-        panel.SetActive(show);
-        if (!show) return;
+        bool rewardState = gameManager.State == GameState.Reward && gameManager.CurrentRewardPlayer != null;
+        bool targeting = rewardState && gameManager.PendingReward != null;
+
+        panel.SetActive(rewardState && !targeting);
+        targetPanel.SetActive(targeting);
+
+        if (!rewardState) return;
+
+        if (targeting)
+        {
+            targetText.text = $"{gameManager.CurrentRewardPlayer.Name}, выберите героя для награды «{gameManager.PendingReward.rewardName}»";
+            return;
+        }
+
         ClearCards();
         if (gameManager.PendingReward == null)
         {
@@ -38,16 +55,6 @@ public class RewardView : MonoBehaviour
             {
                 Reward r = reward;
                 CreateCard(r.rewardName, r.description, r.icon, r.rare, () => gameManager.ChooseReward(r));
-            }
-        }
-        else
-        {
-            titleText.text = $"{gameManager.PendingReward.rewardName}: кому дать?";
-            foreach (var hero in gameManager.GetValidTargets(gameManager.PendingReward))
-            {
-                HeroRuntimeData h = hero;
-                string info = $"Здоровье: {h.Stats.maxHealth:0}\nУрон: {h.Stats.damage:0}\nКрит: {h.Stats.critChance:0}% / {h.Stats.critDamage:0}%\nПредметы: {h.ItemsText}";
-                CreateCard(h.Data.heroName, info, HeroSprite(h), CardRares.Common, () => gameManager.ChooseTarget(h));
             }
         }
     }
@@ -75,12 +82,5 @@ public class RewardView : MonoBehaviour
     private void ClearCards()
     {
         foreach (Transform child in cardsContainer) Destroy(child.gameObject);
-    }
-
-    private Sprite HeroSprite(HeroRuntimeData hero)
-    {
-        bool isLeft = gameManager.CurrentRewardPlayer == gameManager.Player1;
-        Sprite sprite = isLeft ? hero.Data.spriteLeftTeam : hero.Data.spriteRightTeam;
-        return sprite != null ? sprite : hero.Data.spriteLeftTeam;
     }
 }

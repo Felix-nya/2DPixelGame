@@ -11,7 +11,8 @@ public class Hero : MonoBehaviour
     private static readonly StatType[] AllStatTypes = (StatType[])Enum.GetValues(typeof(StatType));
 
     [SerializeField] private HealthBar healthBar;
-    [SerializeField] private ForbiddenMarker marker;
+    [SerializeField] private ZoneMarker marker;
+    [SerializeField] private RangeRing rangeRing;
 
     public HeroRuntimeData Runtime { get; private set; }
     public Team Team { get; private set; }
@@ -72,7 +73,8 @@ public class Hero : MonoBehaviour
     {
         HeroData data = runtime.Data;
         Runtime = runtime;
-        HideForbiddenZone();
+        HideZone();
+        HideRange();
         Data = data;
         Team = team;
         baseStats = runtime.Stats;
@@ -94,14 +96,34 @@ public class Hero : MonoBehaviour
         UpdateHealthBar();
     }
 
-    public void ShowForbiddenZone(float radius)
+    public void ShowZone(float halfSize, Color color)
     {
-        if (marker != null) marker.Show(radius);
+        if (marker != null) marker.Show(halfSize, color);
     }
 
-    public void HideForbiddenZone()
+    public void SetZoneColor(Color color)
+    {
+        if (marker != null) marker.SetColor(color);
+    }
+
+    public void HideZone()
     {
         if (marker != null) marker.Hide();
+    }
+
+    public void ShowRange(float radius)
+    {
+        if (rangeRing != null) rangeRing.Show(radius);
+    }
+
+    public void HideRange()
+    {
+        if (rangeRing != null) rangeRing.Hide();
+    }
+
+    public void SetHighlight(Color color)
+    {
+        visual.SetHighlight(color);
     }
 
     public DamagePacket PrepareDamage(Hero victim, float baseDamage, DamageSource source, bool canCrit = true)

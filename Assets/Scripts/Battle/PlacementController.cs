@@ -2,9 +2,13 @@ using UnityEngine;
 
 public class PlacementController : MonoBehaviour
 {
+    private static readonly Color BlockedColor = new Color(1f, 0.2f, 0.2f, 0.35f);
+    private static readonly Color FreeColor = new Color(0.3f, 1f, 0.3f, 0.35f);
+
     [SerializeField] private GameManager gameManager;
     [SerializeField] private BattleManager battleManager;
     [SerializeField] private PlacementManager placement;
+    [SerializeField] private AllowedAreaOverlay overlay;
 
     private Hero dragged;
     private Vector2 dragOffset;
@@ -44,7 +48,8 @@ public class PlacementController : MonoBehaviour
 
         dragged = hero;
         dragOffset = (Vector2)hero.transform.position - pointerWorld;
-        ShowForbiddenAreas(hero, true);
+        ShowHints(hero);
+        UpdateValidity(hero);
     }
 
     private void OnDrag(Hero hero, Vector2 pointerWorld)
@@ -53,6 +58,7 @@ public class PlacementController : MonoBehaviour
 
         Vector2 target = pointerWorld + dragOffset;
         hero.transform.position = new Vector3(target.x, target.y, hero.transform.position.z);
+        UpdateValidity(hero);
     }
 
     private void OnEndDrag(Hero hero, Vector2 pointerWorld)
@@ -73,23 +79,39 @@ public class PlacementController : MonoBehaviour
             hero.transform.position = new Vector3(old.x, old.y, hero.transform.position.z);
         }
 
-        ShowForbiddenAreas(hero, false);
+        HideHints(hero);
         dragged = null;
     }
 
-    private void ShowForbiddenAreas(Hero moving, bool visible)
+    private void ShowHints(Hero moving)
     {
-        Team enemy = moving.Team == Team.Left ? Team.Right : Team.Left;
-        placement.GetZone(enemy).ShowForbidden(visible);
+        overlay.Show(placement.GetAllowedBounds(moving.Team));
 
         foreach (var other in battleManager.Heroes)
         {
             if (other == moving || other.Team != moving.Team) continue;
+            other.ShowZone(other.Runtime.Data.PlacementRadius, BlockedColor);
+        }
 
-            if (visible)
-                other.ShowForbiddenZone(other.Runtime.Data.PlacementRadius + moving.Runtime.Data.PlacementRadius);
-            else
-                other.HideForbiddenZone();
+        moving.ShowZone(moving.Runtime.Data.PlacementRadius, FreeColor);
+        moving.ShowRange(moving.Stats.range);
+    }
+
+    private void UpdateValidity(Hero moving)
+    {
+        PlayerData placer = gameManager.CurrentPlacementPlayer;
+        bool valid = placement.IsValidPosition(moving.Team, placer, moving.Runtime, moving.transform.position);
+        moving.SetZoneColor(valid ? FreeColor : BlockedColor);
+    }
+
+    private void HideHints(Hero moving)
+    {
+        overlay.Hide();
+        moving.HideRange();
+
+        foreach (var hero in battleManager.Heroes)
+        {
+            if (hero.Team == moving.Team) hero.HideZone();
         }
     }
 }

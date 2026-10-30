@@ -18,11 +18,13 @@ public class HeroVisual : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Color baseColor = Color.white;
+    private Color highlight = Color.white;
     private float hurtTimer;
     private bool isMoving;
     private bool isDead;
     private int nativeFacing = 1;
     private int facing = 1;
+
     public int Facing => facing;
 
     private void Awake()
@@ -46,10 +48,17 @@ public class HeroVisual : MonoBehaviour
         spriteRenderer.flipX = false;
 
         baseColor = tint;
-        spriteRenderer.color = tint;
+        highlight = Color.white;
         hurtTimer = 0f;
         isMoving = false;
         isDead = false;
+        ApplyColor();
+    }
+
+    public void SetHighlight(Color color)
+    {
+        highlight = color;
+        ApplyColor();
     }
 
     public void FaceDirection(float dx)
@@ -104,7 +113,15 @@ public class HeroVisual : MonoBehaviour
         if (hurtTimer <= 0f) return;
 
         hurtTimer -= Time.deltaTime;
-        float t = Mathf.Clamp01(hurtTimer / hurtDuration);
-        spriteRenderer.color = Color.Lerp(baseColor, hurtColor, t);
+        ApplyColor();
+    }
+
+    private void ApplyColor()
+    {
+        Color shown = baseColor * highlight;
+        if (hurtTimer > 0f)
+            shown = Color.Lerp(shown, hurtColor, Mathf.Clamp01(hurtTimer / hurtDuration));
+
+        spriteRenderer.color = shown;
     }
 }
